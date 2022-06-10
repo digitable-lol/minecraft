@@ -10,7 +10,7 @@ using Minecraft_5._0.Data;
 namespace Minecraft_5._0.Migrations
 {
     [DbContext(typeof(AppDBContent))]
-    [Migration("20220610104455_initial")]
+    [Migration("20220610115938_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,8 +34,8 @@ namespace Minecraft_5._0.Migrations
                     b.Property<int?>("count")
                         .HasColumnType("int");
 
-                    b.Property<string>("date")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");

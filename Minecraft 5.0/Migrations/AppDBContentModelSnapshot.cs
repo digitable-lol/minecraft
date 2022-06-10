@@ -32,8 +32,8 @@ namespace Minecraft_5._0.Migrations
                     b.Property<int?>("count")
                         .HasColumnType("int");
 
-                    b.Property<string>("date")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");

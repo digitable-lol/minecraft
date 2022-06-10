@@ -16,7 +16,7 @@ namespace Minecraft_5._0.Data.Mocks
                     new Item {
                         name = "Телевизор",
                         owner = "Данил",
-                        date="02.06.2022",
+                        date=null,
                         price = 21000,
                         photoItem = null,
                         photoBill = null,
@@ -25,7 +25,7 @@ namespace Minecraft_5._0.Data.Mocks
                     new Item {
                         name = "Книга",
                         owner = "Никита",
-                        date = "03.06.2022",
+                        date = null,
                         price = 150,
                         photoItem = null,
                         photoBill = null,

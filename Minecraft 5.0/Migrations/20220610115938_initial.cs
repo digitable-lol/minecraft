@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Minecraft_5._0.Migrations
 {
@@ -18,7 +19,7 @@ namespace Minecraft_5._0.Migrations
                     photoItem = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     photoBill = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     count = table.Column<int>(type: "int", nullable: true),
-                    date = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     comment = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>

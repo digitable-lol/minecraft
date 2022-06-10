@@ -13,11 +13,11 @@ namespace Minecraft_5._0.Data
         public DbSet<Item> Item { get; set; }
     }
 #pragma warning disable CS1591
-    public class TodoContext : DbContext
-    {
-        public TodoContext(DbContextOptions<TodoContext> options) : base(options) { }
+    //public class TodoContext : DbContext
+    //{
+    //    public TodoContext(DbContextOptions<TodoContext> options) : base(options) { }
 
-        public DbSet<TodoItem> TodoItems => Set<TodoItem>();
-    }
+    //    public DbSet<TodoItem> TodoItems => Set<TodoItem>();
+    //}
 #pragma warning restore CS1591
 }
