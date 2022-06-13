@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { Container, Navbar, Nav, Button } from 'react-bootstrap'
+import { Container, Navbar, Nav, Button, Form, FormControl } from 'react-bootstrap'
 import { ButtonComp } from '../ButtonComp/ButtonComp'
+
 
 export const NavbarComp = () => {
     return (
@@ -14,6 +15,18 @@ export const NavbarComp = () => {
                             <ButtonComp></ButtonComp>
                         </Nav>
                     </Navbar.Collapse>
+
+                    
+                    <Form className="d-flex">
+                        <FormControl
+                            type="search"
+                            placeholder="Search"
+                            className="me-2"
+                            aria-label="Search"
+                        />
+                    </Form>
+
+                    
                 </Container>
             </Navbar>
         </div>
