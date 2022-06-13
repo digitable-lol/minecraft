@@ -10,7 +10,7 @@ using Minecraft_5._0.Data;
 namespace Minecraft_5._0.Migrations
 {
     [DbContext(typeof(AppDBContent))]
-    [Migration("20220610115938_initial")]
+    [Migration("20220613123101_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

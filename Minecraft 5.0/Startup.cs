@@ -57,6 +57,13 @@ namespace Minecraft_5._0
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
+            services.AddCors(options => options.AddPolicy("CorsPolicy",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                }));
             services.AddControllersWithViews();
             services.AddMvc();
             services.AddTransient<IAllItems, ItemRepository>();
@@ -67,6 +74,7 @@ namespace Minecraft_5._0
         public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
+            app.UseCors("CorsPolicy");
             app.UseStatusCodePages();
             app.UseStaticFiles();
             app.UseRouting();

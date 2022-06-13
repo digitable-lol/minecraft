@@ -10,7 +10,7 @@ using Minecraft_5._0.Data.Models;
 
 namespace Minecraft_5._0.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/items")]
     [ApiController]
     public class ItemsApiController : ControllerBase
     {
@@ -23,6 +23,7 @@ namespace Minecraft_5._0.Controllers
 
         // GET: api/ItemsApi
         // Выдает все записи
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Item>>> GetItem()
         {
@@ -31,6 +32,7 @@ namespace Minecraft_5._0.Controllers
 
         // GET: api/ItemsApi/5
         // Выдает запись по ID
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<Item>> GetItem(int id)
         {
@@ -48,6 +50,7 @@ namespace Minecraft_5._0.Controllers
         // PUT: api/ItemsApi/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         // Меняет уже добавленную запись
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutItem(int id, Item item)
         {
@@ -81,6 +84,7 @@ namespace Minecraft_5._0.Controllers
 
         // POST: api/ItemsApi
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Route("new")]
         [HttpPost]
         public async Task<ActionResult<Item>> PostItem(Item item)
         { 
