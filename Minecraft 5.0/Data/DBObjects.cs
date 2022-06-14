@@ -15,24 +15,24 @@ namespace Minecraft_5._0.Data
                     new Item
                     {
                         name = "Телевизор",
-                        owner = "Данил",
+                        owner = null,
                         date = null,
                         price = 21000,
-                        photoItem = "",
+                        photo = null,
                         photoBill = null,
-                        count = 1,
-                        comment = "Отдать через два месяца"
+                        quantity = 1,
+                        discription = "Отдать через два месяца"
                     },
                     new Item
                     {
                         name = "Книга",
-                        owner = "Никита",
+                        owner = null,
                         date = null,
                         price = 150,
-                        photoItem = "",
+                        photo = null,
                         photoBill = null,
-                        count = 2,
-                        comment = null
+                        quantity = 2,
+                        discription = null
                     }
                 );
             }

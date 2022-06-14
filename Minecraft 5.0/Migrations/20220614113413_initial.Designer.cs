@@ -10,7 +10,7 @@ using Minecraft_5._0.Data;
 namespace Minecraft_5._0.Migrations
 {
     [DbContext(typeof(AppDBContent))]
-    [Migration("20220613123101_initial")]
+    [Migration("20220614113413_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,21 +40,44 @@ namespace Minecraft_5._0.Migrations
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("owner")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("photoBill")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("photoItem")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ownerid")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("price")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("id");
 
+                    b.HasIndex("ownerid");
+
                     b.ToTable("Item");
+                });
+
+            modelBuilder.Entity("Minecraft_5._0.Data.Models.users", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Firstname")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Lastname")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("users");
+                });
+
+            modelBuilder.Entity("Minecraft_5._0.Data.Models.Item", b =>
+                {
+                    b.HasOne("Minecraft_5._0.Data.Models.users", "owner")
+                        .WithMany()
+                        .HasForeignKey("ownerid");
+
+                    b.Navigation("owner");
                 });
 #pragma warning restore 612, 618
         }
