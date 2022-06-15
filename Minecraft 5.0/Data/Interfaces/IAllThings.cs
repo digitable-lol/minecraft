@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Minecraft_5._0.Data.Interfasec
 {
-    public interface IAllItems
+    public interface IAllThings
     {
-        IEnumerable<Item> Items { get;}
-        Item getObjectItem(int itemId);
+        IEnumerable<thing> things { get;}
+        thing getObjectItem(int thingId);
     }
 }

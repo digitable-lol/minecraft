@@ -11,12 +11,12 @@ using PagedList;
 
 namespace Minecraft_5._0.Controllers
 {
-    [Route("api/items")]
-    public class ItemsApiController : ControllerBase
+    [Route("api/things")]
+    public class ThingApiController : ControllerBase
     {
         private readonly AppDBContent _context;
 
-        public ItemsApiController(AppDBContent context)
+        public ThingApiController(AppDBContent context)
         {
             _context = context;
         }
@@ -25,13 +25,21 @@ namespace Minecraft_5._0.Controllers
         // Выдает все записи или по строке поиска
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItem(string searchstring)
+        public async Task<ActionResult<IEnumerable<thing>>> GetItem(string searchstring, int? user, int quantity)
         {
-            var items = from i in _context.Items
+            var items = from i in _context.Things
                         select i;
             if (!String.IsNullOrEmpty(searchstring))
             {
                 items = items.Where(i => i.name.ToUpper().Contains(searchstring.ToUpper()));
+            }
+            if (user != null && user != 0)
+            {
+                items = items.Where(i => i.user.id == user);
+            }
+            if (quantity != 0)
+            {
+                items = items.Where(i => i.quantity == quantity);
             }
             return await items.ToListAsync();
         }
@@ -39,9 +47,9 @@ namespace Minecraft_5._0.Controllers
         // GET: api/items/5
         // Выдает запись по ID
         [HttpGet("{id}")]
-        public async Task<ActionResult<Item>> GetItem(int id)
+        public async Task<ActionResult<thing>> GetItem(int id)
         {
-            var item = await _context.Items.FindAsync(id);
+            var item = await _context.Things.FindAsync(id);
 
             if (item == null)
             {
@@ -56,14 +64,14 @@ namespace Minecraft_5._0.Controllers
         // Меняет уже добавленную запись
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutItem(int id, Item item)
+        public async Task<IActionResult> PutItem(int id, thing thing)
         {
-            if (id != item.id)
+            if (id != thing.id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(item).State = EntityState.Modified;
+            _context.Entry(thing).State = EntityState.Modified;
 
             try
             {
@@ -90,12 +98,12 @@ namespace Minecraft_5._0.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Route("new")]
         [HttpPost]
-        public async Task<ActionResult<Item>> PostItem(Item item, user user)
+        public async Task<ActionResult<thing>> PostItem(thing thing, user user)
         {
-            _context.Items.Add(item);
+            _context.Things.Add(thing);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetItem", new { id = item.id }, item);
+            return CreatedAtAction("GetItem", new { id = thing.id }, thing);
 
         }
 
@@ -106,13 +114,13 @@ namespace Minecraft_5._0.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItem(int id)
         {
-            var item = await _context.Items.FindAsync(id);
+            var item = await _context.Things.FindAsync(id);
             if (item == null)
             {
                 return NotFound();
             }
 
-            _context.Items.Remove(item);
+            _context.Things.Remove(item);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -120,7 +128,7 @@ namespace Minecraft_5._0.Controllers
 
         private bool ItemExists(int id)
         {
-            return _context.Items.Any(e => e.id == id);
+            return _context.Things.Any(e => e.id == id);
         }
     }
 }

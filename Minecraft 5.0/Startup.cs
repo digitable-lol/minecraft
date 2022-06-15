@@ -39,19 +39,8 @@ namespace Minecraft_5._0
                 options.SwaggerDoc("v1", new OpenApiInfo 
                 {
                     Version = "v1",
-                    Title = "ToDo API",
-                    Description = "An ASP.NET Core Web API for managing ToDo items",
-                    TermsOfService = new Uri("https://example.com/terms"),
-                    Contact = new OpenApiContact
-                    {
-                        Name = "Example Contact",
-                        Url = new Uri("https://example.com/contact")
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = "Example License",
-                        Url = new Uri("https://example.com/license")
-                    }
+                    Title = "SuperMinecraft",
+                    Description = "Ну мы тут чот делаем, даааа",
                 });
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -70,7 +59,7 @@ namespace Minecraft_5._0
 
             services.AddControllersWithViews();
             services.AddMvc();
-            services.AddTransient<IAllItems, ItemRepository>();
+            services.AddTransient<IAllThings, ThingRepository>();
             services.AddDbContext<AppDBContent>(options => options.UseSqlServer(_confString.GetConnectionString("DefaultConnection")));
         }
 

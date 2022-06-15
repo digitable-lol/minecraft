@@ -8,17 +8,17 @@ using System.Linq;
 
 namespace Minecraft_5._0.Data.Repositories
 {
-    public class ItemRepository : IAllItems
+    public class ThingRepository : IAllThings
     {
         private readonly AppDBContent appDBContent;
-        public ItemRepository(AppDBContent appDBContent)
+        public ThingRepository(AppDBContent appDBContent)
         {
             this.appDBContent = appDBContent;
         }
 
-        public IEnumerable<Item> Items => appDBContent.Items;
+        public IEnumerable<thing> things => appDBContent.Things;
 
-        public Item getObjectItem(int itemId)
+        public thing getObjectItem(int thingid)
         {
             throw new NotImplementedException();
         }

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Minecraft_5._0.Data.Models
 {
-    public class Item
+    public class thing
     {
         public int id { get; set; }
         public string name { get; set; }
