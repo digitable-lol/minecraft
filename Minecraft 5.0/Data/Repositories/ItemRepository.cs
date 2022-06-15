@@ -16,7 +16,7 @@ namespace Minecraft_5._0.Data.Repositories
             this.appDBContent = appDBContent;
         }
 
-        public IEnumerable<Item> Items => appDBContent.Item;
+        public IEnumerable<Item> Items => appDBContent.Items;
 
         public Item getObjectItem(int itemId)
         {

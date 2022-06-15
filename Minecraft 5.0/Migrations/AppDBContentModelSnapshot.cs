@@ -26,32 +26,38 @@ namespace Minecraft_5._0.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("count")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("date")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("discription")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ownerid")
-                        .HasColumnType("int");
+                    b.Property<string>("photo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("photoBill")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("userid")
+                        .HasColumnType("int");
+
                     b.HasKey("id");
 
-                    b.HasIndex("ownerid");
+                    b.HasIndex("userid");
 
-                    b.ToTable("Item");
+                    b.ToTable("Items");
                 });
 
-            modelBuilder.Entity("Minecraft_5._0.Data.Models.users", b =>
+            modelBuilder.Entity("Minecraft_5._0.Data.Models.user", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -66,16 +72,23 @@ namespace Minecraft_5._0.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("users");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Minecraft_5._0.Data.Models.Item", b =>
                 {
-                    b.HasOne("Minecraft_5._0.Data.Models.users", "owner")
-                        .WithMany()
-                        .HasForeignKey("ownerid");
+                    b.HasOne("Minecraft_5._0.Data.Models.user", "user")
+                        .WithMany("items")
+                        .HasForeignKey("userid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("owner");
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("Minecraft_5._0.Data.Models.user", b =>
+                {
+                    b.Navigation("items");
                 });
 #pragma warning restore 612, 618
         }

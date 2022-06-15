@@ -9,12 +9,13 @@ namespace Minecraft_5._0.Data.Models
     {
         public int id { get; set; }
         public string name { get; set; }
-        public users owner { get; set; }
         public decimal? price { get; set; }
         public string photo { get; set; }
-        public string photoBill { get; set; }
+        public string? photoBill { get; set; }
         public int? quantity { get; set; }
         public DateTime? date { get; set; }
         public string? discription { get; set; }
+        public int userid { get; set; }
+        public virtual user user { get; set; }
     }
 }

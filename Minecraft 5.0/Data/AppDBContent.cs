@@ -10,6 +10,7 @@ namespace Minecraft_5._0.Data
         {
 
         }
-        public DbSet<Item> Item { get; set; }
+        public DbSet<Item> Items { get; set; } = null!;
+        public DbSet<user> Users { get; set; } = null!;
     }
 }

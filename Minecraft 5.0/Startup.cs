@@ -63,6 +63,11 @@ namespace Minecraft_5._0
                     .AllowAnyMethod()
                     .AllowAnyHeader();
                 }));
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
+
             services.AddControllersWithViews();
             services.AddMvc();
             services.AddTransient<IAllItems, ItemRepository>();
@@ -96,7 +101,6 @@ namespace Minecraft_5._0
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 AppDBContent content = scope.ServiceProvider.GetRequiredService<AppDBContent>();
-                DBObjects.Initial(content);
             }
         }
     }
