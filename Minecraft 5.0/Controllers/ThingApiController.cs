@@ -6,7 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Minecraft_5._0.Data;
+using Minecraft_5._0.Data.Filters;
+using Minecraft_5._0.Data.Helpers;
+using Minecraft_5._0.Data.Interfaces;
 using Minecraft_5._0.Data.Models;
+using Minecraft_5._0.Data.Services;
+using Minecraft_5._0.Data.Wrappers;
+using Minecraft_5._0.ViewModels;
 using PagedList;
 
 namespace Minecraft_5._0.Controllers
@@ -15,48 +21,78 @@ namespace Minecraft_5._0.Controllers
     public class ThingApiController : ControllerBase
     {
         private readonly AppDBContent _context;
-
-        public ThingApiController(AppDBContent context)
+        private IUriServiсe uriService;
+        public ThingApiController(AppDBContent context, IUriServiсe uriService)
         {
             _context = context;
+            this.uriService = uriService;
         }
 
         // GET: api/items
         // Выдает все записи или по строке поиска
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<thing>>> GetItem(string searchstring, int? user, int quantity)
+        public async Task<ActionResult<IEnumerable<thing>>> GetThings([FromQuery] PaginationFilter filter)
         {
-            var items = from i in _context.Things
-                        select i;
+            var route = Request.Path.Value;
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var pagedData = await _context.Things
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToListAsync();
+            var totalRecords = await _context.Things.CountAsync();
+            var pagedResponse = PaginationHelper.CreatePagedReponse<thing>(pagedData, validFilter, totalRecords, uriService, route);
+            return Ok(pagedResponse);
+        }
+        [Route("search")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<thing>>> GetThings(string searchstring, int? user, int quantity) 
+        {
+            var things = from i in _context.Things
+                         select i;
             if (!String.IsNullOrEmpty(searchstring))
             {
-                items = items.Where(i => i.name.ToUpper().Contains(searchstring.ToUpper()));
+                things = things.Where(i => i.name.ToUpper().Contains(searchstring.ToUpper()));
             }
             if (user != null && user != 0)
             {
-                items = items.Where(i => i.user.id == user);
+                things = things.Where(i => i.user.id == user);
             }
             if (quantity != 0)
             {
-                items = items.Where(i => i.quantity == quantity);
+                things = things.Where(i => i.quantity == quantity);
             }
-            return await items.ToListAsync();
+            return await things.ToListAsync();
+        }
+
+        [Route("filtration")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<thing>>> GetThings(int? user, int quantity)
+        {
+            var things = from i in _context.Things
+                         select i;
+            if (user != null && user != 0)
+            {
+                things = things.Where(i => i.user.id == user);
+            }
+            if (quantity != 0)
+            {
+                things = things.Where(i => i.quantity == quantity);
+            }
+            return await things.ToListAsync();
         }
 
         // GET: api/items/5
         // Выдает запись по ID
         [HttpGet("{id}")]
-        public async Task<ActionResult<thing>> GetItem(int id)
+        public async Task<ActionResult<thing>> GetThing(int id)
         {
-            var item = await _context.Things.FindAsync(id);
-
-            if (item == null)
+            var thing = await _context.Things.Where(t => t.id == id).FirstOrDefaultAsync();
+            if (thing == null)
             {
                 return NotFound();
             }
-
-            return item;
+            return thing;
         }
 
         // PUT: api/items/5
@@ -64,7 +100,7 @@ namespace Minecraft_5._0.Controllers
         // Меняет уже добавленную запись
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutItem(int id, thing thing)
+        public async Task<IActionResult> Putthing(int id, thing thing)
         {
             if (id != thing.id)
             {
@@ -98,7 +134,7 @@ namespace Minecraft_5._0.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Route("new")]
         [HttpPost]
-        public async Task<ActionResult<thing>> PostItem(thing thing, user user)
+        public async Task<ActionResult<thing>> Postthing(thing thing)
         {
             _context.Things.Add(thing);
             await _context.SaveChangesAsync();
@@ -112,7 +148,7 @@ namespace Minecraft_5._0.Controllers
         // DELETE: api/items/5
         // Удаляет запись по ID
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteItem(int id)
+        public async Task<IActionResult> Deletething(int id)
         {
             var item = await _context.Things.FindAsync(id);
             if (item == null)

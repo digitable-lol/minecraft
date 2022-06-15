@@ -10,7 +10,7 @@ using Minecraft_5._0.Data;
 namespace Minecraft_5._0.Migrations
 {
     [DbContext(typeof(AppDBContent))]
-    [Migration("20220615090620_Initial")]
+    [Migration("20220615181820_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace Minecraft_5._0.Migrations
                 .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Minecraft_5._0.Data.Models.Item", b =>
+            modelBuilder.Entity("Minecraft_5._0.Data.Models.thing", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,7 @@ namespace Minecraft_5._0.Migrations
 
                     b.HasIndex("userid");
 
-                    b.ToTable("Items");
+                    b.ToTable("Things");
                 });
 
             modelBuilder.Entity("Minecraft_5._0.Data.Models.user", b =>
@@ -77,10 +77,10 @@ namespace Minecraft_5._0.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Minecraft_5._0.Data.Models.Item", b =>
+            modelBuilder.Entity("Minecraft_5._0.Data.Models.thing", b =>
                 {
                     b.HasOne("Minecraft_5._0.Data.Models.user", "user")
-                        .WithMany("items")
+                        .WithMany("things")
                         .HasForeignKey("userid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -90,7 +90,7 @@ namespace Minecraft_5._0.Migrations
 
             modelBuilder.Entity("Minecraft_5._0.Data.Models.user", b =>
                 {
-                    b.Navigation("items");
+                    b.Navigation("things");
                 });
 #pragma warning restore 612, 618
         }

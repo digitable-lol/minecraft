@@ -17,6 +17,8 @@ using Swashbuckle.Swagger;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
+using Minecraft_5._0.Data.Interfaces;
+using Minecraft_5._0.Data.Services;
 
 namespace Minecraft_5._0
 {
@@ -45,6 +47,15 @@ namespace Minecraft_5._0
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
+
+            services.AddSingleton<IUriServiñe>(o =>
+            {
+                var accessor = o.GetRequiredService<IHttpContextAccessor>();
+                var request = accessor.HttpContext.Request;
+                var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+                return new UriService(uri);
+            });
+
             services.AddCors(options => options.AddPolicy("CorsPolicy",
                 builder =>
                 {
@@ -52,11 +63,13 @@ namespace Minecraft_5._0
                     .AllowAnyMethod()
                     .AllowAnyHeader();
                 }));
+
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
 
+            services.AddHttpContextAccessor();
             services.AddControllersWithViews();
             services.AddMvc();
             services.AddTransient<IAllThings, ThingRepository>();

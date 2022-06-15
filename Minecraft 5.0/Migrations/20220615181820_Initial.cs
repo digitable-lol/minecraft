@@ -22,7 +22,7 @@ namespace Minecraft_5._0.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Items",
+                name: "Things",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -38,9 +38,9 @@ namespace Minecraft_5._0.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Items", x => x.id);
+                    table.PrimaryKey("PK_Things", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Items_Users_userid",
+                        name: "FK_Things_Users_userid",
                         column: x => x.userid,
                         principalTable: "Users",
                         principalColumn: "id",
@@ -48,15 +48,15 @@ namespace Minecraft_5._0.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Items_userid",
-                table: "Items",
+                name: "IX_Things_userid",
+                table: "Things",
                 column: "userid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Items");
+                name: "Things");
 
             migrationBuilder.DropTable(
                 name: "Users");
