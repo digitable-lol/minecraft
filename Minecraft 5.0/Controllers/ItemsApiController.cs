@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Minecraft_5._0.Data;
 using Minecraft_5._0.Data.Models;
+using PagedList;
 
 namespace Minecraft_5._0.Controllers
 {
@@ -21,13 +22,18 @@ namespace Minecraft_5._0.Controllers
         }
 
         // GET: api/items
-        // Выдает все записи
+        // Выдает все записи или по строке поиска
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItem()
+        public async Task<ActionResult<IEnumerable<Item>>> GetItem(string searchstring)
         {
-            var items = _context.Items.Include(i => i.user).ToList();
-            return await _context.Items.Include(i => i.user).ToListAsync();
+            var items = from i in _context.Items
+                        select i;
+            if (!String.IsNullOrEmpty(searchstring))
+            {
+                items = items.Where(i => i.name.ToUpper().Contains(searchstring.ToUpper()));
+            }
+            return await items.ToListAsync();
         }
 
         // GET: api/items/5
