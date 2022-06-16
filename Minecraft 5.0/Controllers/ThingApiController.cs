@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Minecraft_5._0.Data;
 using Minecraft_5._0.Data.Filters;
@@ -44,23 +45,30 @@ namespace Minecraft_5._0.Controllers
         }
         [Route("search")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<thing>>> GetThings(string searchstring)
+        public async Task<ActionResult<IEnumerable<thing>>> GetThings(string searchstr)
         {
             var things = from t in _context.Things
                          select t;
-            if (!String.IsNullOrEmpty(searchstring))
+            if (!String.IsNullOrEmpty(searchstr))
             {
-                things = things.Where(t => t.name.ToUpper().Contains(searchstring.ToUpper()));
+                things = things.Where(t => t.name.ToUpper().Contains(searchstr.ToUpper()));
             }
             return await things.ToListAsync();
         }
 
         [Route("filtration")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<thing>>> GetThings(int? user, int quantity, decimal? priceUp, decimal? priceLow, DateTime? minDate, DateTime? maxDate)
+
+        public async Task<ActionResult<IEnumerable<thing>>> GetThings(int? user, int quantity, decimal? priceLow, decimal? priceHigh, DateTime? minDate, DateTime? maxDate, bool photoBill)
         {
+            priceLow = priceLow == null ? _context.Things.Min(t => t.price) : priceLow;
+            priceHigh = priceHigh == null ? _context.Things.Max(t=>t.price) : priceHigh;
             var things = from t in _context.Things
                          select t;
+            if (photoBill)
+            {
+                things = things.Where(t => t.photoBill != null);
+            }
             if (user != null && user != 0)
             {
                 things = things.Where(t => t.user.id == user);
@@ -69,9 +77,9 @@ namespace Minecraft_5._0.Controllers
             {
                 things = things.Where(t => t.quantity == quantity);
             }
-            if (priceLow!=null || priceUp !=null)
+            if (priceLow != null || priceHigh != null)
             {
-                things = things.Where(t => (t.price <= priceUp) && (t.price >= priceLow));
+                things = things.Where(t => (t.price <= priceHigh) && (t.price >= priceLow));
             }
             if (minDate != null || maxDate != null)
             {
