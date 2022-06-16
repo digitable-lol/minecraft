@@ -1,0 +1,29 @@
+﻿@using Minecraft_5._0.ViewModels;
+@model ThingsListViewModel
+
+@{
+}
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width"/>
+        <title>ListItems</title>
+    </head>
+    <body>
+        <h2>Все предметы</h2>
+    @{
+        foreach (var item in Model.allthings)
+        {
+            <div>
+                <h2>Название: @item.name</h2>
+                <p>Владелец: @item.user</p>
+                <p>Дата: @item.date</p>
+                <p>Стоимость: @item.price.ToString()</p>
+                <p>Комментарий: @item.discription</p>
+            </div>
+        }
+    }
+    </body>
+</html>
