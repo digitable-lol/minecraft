@@ -1,7 +1,19 @@
 # minecraft
 
 # Frontend
-### Первое, что необходимо сделать для запуска - 'npm install', затем переключиться на необходимую папку - 'cd client' и запстить прект - 'npm start'
+
+Первое, что необходимо сделать для запуска:
+
+### 'npm install'
+
+Затем необходимо переключиться на папку с фронтендом:
+
+### 'cd client' 
+
+И для запуска проекта напсать команду:
+
+### 'npm start'
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
