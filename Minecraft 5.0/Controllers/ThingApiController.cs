@@ -34,33 +34,27 @@ namespace Minecraft_5._0.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<thing>>> GetThings([FromQuery] PaginationFilter filter)
         {
+            if (filter.PageNumber < 0) { filter.PageNumber = 1; }
+            if (filter.PageSize < 0) { filter.PageSize = 6; }
             var route = Request.Path.Value;
-            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-            var pagedData = await _context.Things
-                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
-                .Take(validFilter.PageSize)
+            var things = await _context.Things
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
                 .ToListAsync();
             var totalRecords = await _context.Things.CountAsync();
-            var pagedResponse = PaginationHelper.CreatePagedReponse<thing>(pagedData, validFilter, totalRecords, uriService, route);
+            var pagedResponse = PaginationHelper.CreatePagedReponse<thing>(things, filter, totalRecords, uriService, route);
             return Ok(pagedResponse);
+            //return things;
         }
         [Route("search")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<thing>>> GetThings(string searchstring, int? user, int quantity) 
+        public async Task<ActionResult<IEnumerable<thing>>> GetThings(string searchstring) 
         {
             var things = from i in _context.Things
                          select i;
             if (!String.IsNullOrEmpty(searchstring))
             {
                 things = things.Where(i => i.name.ToUpper().Contains(searchstring.ToUpper()));
-            }
-            if (user != null && user != 0)
-            {
-                things = things.Where(i => i.user.id == user);
-            }
-            if (quantity != 0)
-            {
-                things = things.Where(i => i.quantity == quantity);
             }
             return await things.ToListAsync();
         }

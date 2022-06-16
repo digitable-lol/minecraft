@@ -4,7 +4,7 @@ namespace Minecraft_5._0.Data.Wrappers
 {
     public class Response<T>
     {
-        public Response()
+        public Response(T Data)
         {
             Succeeded = true;
             Message = string.Empty;
