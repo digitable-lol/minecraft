@@ -9,7 +9,7 @@ export default class CardList extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(`https://localhost:5001/api/Get`)
+    axios.get(`https://localhost:5001/api/things`)
       .then(res => {
         const cards = res.data;
         console.log(cards)

@@ -3,7 +3,8 @@ import { Container, Navbar, Nav, Button, Form, FormControl } from 'react-bootstr
 import { ButtonComp } from '../ButtonComp/ButtonComp'
 
 
-export const NavbarComp = () => {
+export const NavbarComp = ({setShow, isDeleting, setIsDeleting}) => {
+    console.log(isDeleting)
     return (
         <div>
             <Navbar bg="dark" variant={"dark"} expand="lg">
@@ -12,7 +13,7 @@ export const NavbarComp = () => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <ButtonComp></ButtonComp>
+                            <ButtonComp setShow={setShow} isDeleting={isDeleting} setIsDeleting={setIsDeleting} />
                         </Nav>
                     </Navbar.Collapse>
 

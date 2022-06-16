@@ -1,7 +1,8 @@
 import React from 'react'
 import ProductCard from '../ProductCard'
+import './index.scss'
 
-const ModalComp = props => {
+const ModalComp = ({setShow}) => {
 
     const data={ 
         name:'',
@@ -12,10 +13,10 @@ const ModalComp = props => {
     }
 
     return (
-        <div className='modal'>
-            <div className='modal-content'>
+        <div className='modal' onClick={()=>setShow(false)}>
+            <div className='modal-content' onClick={(e)=>e.stopPropagation()}>
                 <div className='modal-body'>
-                    <ProductCard data={data} setShow = {props.setShow} isPost />
+                    <ProductCard data={data} isPost />
                 </div>
             </div>
         </div>

@@ -3,14 +3,14 @@ import { Button } from 'react-bootstrap'
 import ModalComp from '../ModalComp/ModalComp'
 
 
-export const ButtonComp = () => {
-    const [show, setShow] = useState(false)
+export const ButtonComp = (props) => {
     return (
         <div>
-            <Button onClick={()=>setShow(true)} type="primary">Добавить</Button>{' '}
-            <Button type="primary">Удалить</Button>{' '}
-            {show && <ModalComp setShow={setShow}/>}
-            {console.log(show)}
+            <Button onClick={()=>props.setShow(true)} type="primary">Добавить</Button>{' '}
+            {!props.isDeleting && <>
+            <Button onClick={()=>props.setIsDeleting(true)} type="primary">Удалить</Button>{' '}</>}
+            {props.isDeleting && <>
+            <Button onClick={()=>props.setIsDeleting(false)} type="primary">Отмена</Button>{' '}</>}
         </div>
     )
 }
