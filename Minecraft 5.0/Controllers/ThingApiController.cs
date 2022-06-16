@@ -30,12 +30,9 @@ namespace Minecraft_5._0.Controllers
 
         // GET: api/items
         // Выдает все записи или по строке поиска
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<thing>>> GetThings([FromQuery] PaginationFilter filter)
         {
-            if (filter.PageNumber < 0) { filter.PageNumber = 1; }
-            if (filter.PageSize < 0) { filter.PageSize = 6; }
             var route = Request.Path.Value;
             var things = await _context.Things
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
@@ -44,34 +41,41 @@ namespace Minecraft_5._0.Controllers
             var totalRecords = await _context.Things.CountAsync();
             var pagedResponse = PaginationHelper.CreatePagedReponse<thing>(things, filter, totalRecords, uriService, route);
             return Ok(pagedResponse);
-            //return things;
         }
         [Route("search")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<thing>>> GetThings(string searchstring) 
+        public async Task<ActionResult<IEnumerable<thing>>> GetThings(string searchstring)
         {
-            var things = from i in _context.Things
-                         select i;
+            var things = from t in _context.Things
+                         select t;
             if (!String.IsNullOrEmpty(searchstring))
             {
-                things = things.Where(i => i.name.ToUpper().Contains(searchstring.ToUpper()));
+                things = things.Where(t => t.name.ToUpper().Contains(searchstring.ToUpper()));
             }
             return await things.ToListAsync();
         }
 
         [Route("filtration")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<thing>>> GetThings(int? user, int quantity)
+        public async Task<ActionResult<IEnumerable<thing>>> GetThings(int? user, int quantity, decimal? priceUp, decimal? priceLow, DateTime? minDate, DateTime? maxDate)
         {
-            var things = from i in _context.Things
-                         select i;
+            var things = from t in _context.Things
+                         select t;
             if (user != null && user != 0)
             {
-                things = things.Where(i => i.user.id == user);
+                things = things.Where(t => t.user.id == user);
             }
             if (quantity != 0)
             {
-                things = things.Where(i => i.quantity == quantity);
+                things = things.Where(t => t.quantity == quantity);
+            }
+            if (priceLow!=null || priceUp !=null)
+            {
+                things = things.Where(t => (t.price <= priceUp) && (t.price >= priceLow));
+            }
+            if (minDate != null || maxDate != null)
+            {
+                things = things.Where(t => (t.date <= minDate) && (t.date >= maxDate));
             }
             return await things.ToListAsync();
         }
@@ -92,7 +96,6 @@ namespace Minecraft_5._0.Controllers
         // PUT: api/items/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         // Меняет уже добавленную запись
-
         [HttpPut("{id}")]
         public async Task<IActionResult> Putthing(int id, thing thing)
         {
@@ -126,7 +129,7 @@ namespace Minecraft_5._0.Controllers
 
         // POST: api/items/new
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Route("new")]
+        [Route("things/new")]
         [HttpPost]
         public async Task<ActionResult<thing>> Postthing(thing thing)
         {

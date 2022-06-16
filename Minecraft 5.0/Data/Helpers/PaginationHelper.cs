@@ -12,8 +12,8 @@ namespace Minecraft_5._0.Data.Helpers
         public static PagedResponse<List<thing>> CreatePagedReponse<thing>(List<thing> pagedData,PaginationFilter filter, int totalRecords, IUriServiсe uriService, string route)
         {
             var respose = new PagedResponse<List<thing>>(pagedData, filter.PageNumber, filter.PageSize);
-            var totalPages = totalRecords / filter.PageSize;
-            int roundedTotalPages = totalPages;
+            var totalPages = ((double)totalRecords / (double)filter.PageSize);
+            int roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
             respose.NextPage =
                 filter.PageNumber >= 1 && filter.PageNumber < roundedTotalPages
                 ? uriService.GetPageUri(new PaginationFilter(filter.PageNumber + 1, filter.PageSize), route)

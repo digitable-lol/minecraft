@@ -11,8 +11,8 @@
         }
         public PaginationFilter(int pageNumber, int pageSize)
         {
-            this.PageNumber = pageNumber;
-            this.PageSize = pageSize;
+            this.PageNumber = pageNumber < 1 ? 1 : pageNumber;
+            this.PageSize = pageSize > 6 ? 6 : pageSize;
         }
     }
 }
