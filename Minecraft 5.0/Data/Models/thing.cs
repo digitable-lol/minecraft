@@ -15,7 +15,6 @@ namespace Minecraft_5._0.Data.Models
         public int? quantity { get; set; }
         public DateTime? date { get; set; }
         public string? discription { get; set; }
-        public int userid { get; set; }
-        public virtual user user { get; set; }
+        public user user { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -58,20 +59,22 @@ namespace Minecraft_5._0.Controllers
 
         [Route("filtration")]
         [HttpGet]
-
-        public async Task<ActionResult<IEnumerable<thing>>> GetThings(int? user, int quantity, decimal? priceLow, decimal? priceHigh, DateTime? minDate, DateTime? maxDate, bool photoBill)
+        public async Task<ActionResult<IEnumerable<thing>>> GetThings(string userFN, string userLN, int quantity, decimal? priceLow, decimal? priceHigh, DateTime? minDate, DateTime? maxDate, bool photoBill)
         {
             priceLow = priceLow == null ? _context.Things.Min(t => t.price) : priceLow;
-            priceHigh = priceHigh == null ? _context.Things.Max(t=>t.price) : priceHigh;
+            priceHigh = priceHigh == null ? _context.Things.Max(t => t.price) : priceHigh;
+            minDate = minDate == null ? _context.Things.Min(t => t.date) : minDate;
+            maxDate = maxDate == null ? _context.Things.Max(t => t.date) : maxDate;
+
             var things = from t in _context.Things
                          select t;
             if (photoBill)
             {
                 things = things.Where(t => t.photoBill != null);
             }
-            if (user != null && user != 0)
+            if (userFN != null && userLN != null)
             {
-                things = things.Where(t => t.user.id == user);
+                things = things.Where(t => t.user.Firstname == userFN && t.user.Lastname == userLN);
             }
             if (quantity != 0)
             {
@@ -133,35 +136,34 @@ namespace Minecraft_5._0.Controllers
             return NoContent();
         }
 
-
-
         // POST: api/items/new
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Route("things/new")]
+        [Route("new")]
         [HttpPost]
-        public async Task<ActionResult<thing>> Postthing(thing thing)
+        public async Task<ActionResult<thing>> Postthing(thing thing, user user) 
         {
-            _context.Things.Add(thing);
+            thing.date = DateTime.Now;
+            if (user.id != thing.user.id) 
+            {
+                _context.Things.Add(thing);
+            }
+            _context.Entry(thing).State=EntityState.Added;
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetItem", new { id = thing.id }, thing);
-
+            return CreatedAtAction("GetItem", new { id = thing.id }, thing);  
         }
-
-
 
         // DELETE: api/items/5
         // Удаляет запись по ID
         [HttpDelete("{id}")]
         public async Task<IActionResult> Deletething(int id)
         {
-            var item = await _context.Things.FindAsync(id);
-            if (item == null)
+            var thing = await _context.Things.FindAsync(id);
+            if (thing == null)
             {
                 return NotFound();
             }
 
-            _context.Things.Remove(item);
+            _context.Things.Remove(thing);
             await _context.SaveChangesAsync();
 
             return NoContent();

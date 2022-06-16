@@ -10,8 +10,8 @@ using Minecraft_5._0.Data;
 namespace Minecraft_5._0.Migrations
 {
     [DbContext(typeof(AppDBContent))]
-    [Migration("20220615181820_Initial")]
-    partial class Initial
+    [Migration("20220616224934_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,7 +49,7 @@ namespace Minecraft_5._0.Migrations
                     b.Property<int?>("quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("userid")
+                    b.Property<int?>("userid")
                         .HasColumnType("int");
 
                     b.HasKey("id");
@@ -81,9 +81,7 @@ namespace Minecraft_5._0.Migrations
                 {
                     b.HasOne("Minecraft_5._0.Data.Models.user", "user")
                         .WithMany("things")
-                        .HasForeignKey("userid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("userid");
 
                     b.Navigation("user");
                 });
