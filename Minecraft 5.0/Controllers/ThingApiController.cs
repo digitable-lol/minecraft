@@ -14,7 +14,7 @@ using Minecraft_5._0.Data.Interfaces;
 using Minecraft_5._0.Data.Models;
 using Minecraft_5._0.Data.Services;
 using Minecraft_5._0.Data.Wrappers;
-using Minecraft_5._0.ViewModels;
+using Minecraft_5._0.Controllers;
 using PagedList;
 
 namespace Minecraft_5._0.Controllers
@@ -33,41 +33,20 @@ namespace Minecraft_5._0.Controllers
         // GET: api/items
         // Выдает все записи или по строке поиска
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<thing>>> GetThings([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<IEnumerable<thing>>> GetThings([FromQuery] PaginationFilter filter, string searchstr, string userFN, string userLN, int quantity, decimal? priceLow, decimal? priceHigh, DateTime? minDate, DateTime? maxDate, bool photoBill)
         {
-            var route = Request.Path.Value;
-            var things = await _context.Things
-                .Skip((filter.PageNumber - 1) * filter.PageSize)
-                .Take(filter.PageSize)
-                .ToListAsync();
-            var totalRecords = await _context.Things.CountAsync();
-            var pagedResponse = PaginationHelper.CreatePagedReponse<thing>(things, filter, totalRecords, uriService, route);
-            return Ok(pagedResponse);
-        }
-        [Route("search")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<thing>>> GetThings(string searchstr)
-        {
-            var things = from t in _context.Things
+            var things = from t in _context.Things.Include(t => t.user)
                          select t;
-            if (!String.IsNullOrEmpty(searchstr))
-            {
-                things = things.Where(t => t.name.ToUpper().Contains(searchstr.ToUpper()));
-            }
-            return await things.ToListAsync();
-        }
-
-        [Route("filtration")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<thing>>> GetThings(string userFN, string userLN, int quantity, decimal? priceLow, decimal? priceHigh, DateTime? minDate, DateTime? maxDate, bool photoBill)
-        {
             priceLow = priceLow == null ? _context.Things.Min(t => t.price) : priceLow;
             priceHigh = priceHigh == null ? _context.Things.Max(t => t.price) : priceHigh;
             minDate = minDate == null ? _context.Things.Min(t => t.date) : minDate;
             maxDate = maxDate == null ? _context.Things.Max(t => t.date) : maxDate;
+            var route = Request.Path.Value;
+            if (!String.IsNullOrEmpty(searchstr))
+            {
+                things = things.Where(t => t.name.ToUpper().Contains(searchstr.ToUpper()));
+            }
 
-            var things = from t in _context.Things
-                         select t;
             if (photoBill)
             {
                 things = things.Where(t => t.photoBill != null);
@@ -84,11 +63,18 @@ namespace Minecraft_5._0.Controllers
             {
                 things = things.Where(t => (t.price <= priceHigh) && (t.price >= priceLow));
             }
+
             if (minDate != null || maxDate != null)
             {
-                things = things.Where(t => (t.date <= minDate) && (t.date >= maxDate));
+                things = things.Where(t => (t.date >= minDate) && (t.date <= maxDate));
             }
-            return await things.ToListAsync();
+            things = things.Include(t => t.user)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize);
+            var thingsList = things.ToList(); 
+            var totalRecords = thingsList.Count();
+            var pagedResponse = PaginationHelper.CreatePagedReponse<thing>(thingsList, filter, totalRecords, uriService, route);
+            return Ok(pagedResponse);
         }
 
         // GET: api/items/5
@@ -96,7 +82,7 @@ namespace Minecraft_5._0.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<thing>> GetThing(int id)
         {
-            var thing = await _context.Things.Where(t => t.id == id).FirstOrDefaultAsync();
+            var thing = await _context.Things.Include(t => t.user).Where(t => t.id == id).FirstOrDefaultAsync();
             if (thing == null)
             {
                 return NotFound();
@@ -140,16 +126,35 @@ namespace Minecraft_5._0.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Route("new")]
         [HttpPost]
-        public async Task<ActionResult<thing>> Postthing(thing thing, user user) 
+        public async Task<ActionResult<thing>> Postthing(string name, int price, string photo, string photoBill, int quantity, DateTime? date, string disc, string userFN, string userLN) 
         {
-            thing.date = DateTime.Now;
-            if (user.id != thing.user.id) 
+            thing thing = new();
+            user user = new();
+            foreach (user users in _context.Users.ToList())
             {
-                _context.Things.Add(thing);
+                if (users.Firstname == userFN && users.Lastname == userLN)
+                {
+
+                    thing.userid = users.id;
+
+                }
+                else
+                {
+                    return NotFound();                   
+                }
             }
+            
+            thing.name = name;
+            thing.price = price;
+            thing.photo = photo;
+            thing.photoBill = photoBill;
+            if (date == null) { thing.date = DateTime.Now; }
+            thing.quantity = quantity;
+            thing.discription = disc;
+
             _context.Entry(thing).State=EntityState.Added;
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetItem", new { id = thing.id }, thing);  
+            return CreatedAtAction("GetThings", new { id = thing.id }, thing);  
         }
 
         // DELETE: api/items/5

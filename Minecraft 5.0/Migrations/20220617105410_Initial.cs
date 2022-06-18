@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Minecraft_5._0.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -34,7 +34,7 @@ namespace Minecraft_5._0.Migrations
                     quantity = table.Column<int>(type: "int", nullable: true),
                     date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     discription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    userid = table.Column<int>(type: "int", nullable: true)
+                    userid = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,7 +44,7 @@ namespace Minecraft_5._0.Migrations
                         column: x => x.userid,
                         principalTable: "Users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

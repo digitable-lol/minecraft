@@ -47,7 +47,7 @@ namespace Minecraft_5._0.Migrations
                     b.Property<int?>("quantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("userid")
+                    b.Property<int>("userid")
                         .HasColumnType("int");
 
                     b.HasKey("id");
@@ -79,7 +79,9 @@ namespace Minecraft_5._0.Migrations
                 {
                     b.HasOne("Minecraft_5._0.Data.Models.user", "user")
                         .WithMany("things")
-                        .HasForeignKey("userid");
+                        .HasForeignKey("userid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("user");
                 });

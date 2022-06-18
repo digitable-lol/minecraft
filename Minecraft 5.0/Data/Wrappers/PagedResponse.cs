@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 namespace Minecraft_5._0.Data.Wrappers
 {
-    public class PagedResponse<T> : Response<T>
+    public class PagedResponse <T> : Response <T>
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
