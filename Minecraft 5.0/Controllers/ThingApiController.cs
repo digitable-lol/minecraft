@@ -68,11 +68,12 @@ namespace Minecraft_5._0.Controllers
             {
                 things = things.Where(t => (t.date >= minDate) && (t.date <= maxDate));
             }
+            var thingCount = things.ToList();
             things = things.Include(t => t.user)
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize);
-            var thingsList = things.ToList(); 
-            var totalRecords = thingsList.Count();
+            var thingsList = things.ToList();
+            var totalRecords = thingCount.Count();
             var pagedResponse = PaginationHelper.CreatePagedReponse<thing>(thingsList, filter, totalRecords, uriService, route);
             return Ok(pagedResponse);
         }
@@ -94,12 +95,38 @@ namespace Minecraft_5._0.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         // Меняет уже добавленную запись
         [HttpPut("{id}")]
-        public async Task<IActionResult> Putthing(int id, thing thing)
+        public async Task<IActionResult> Putthing(int id, string name, decimal price, string photo, string photoBill, int quantity, DateTime date, string disc, string userFN, string userLN)
         {
+            var thing = await _context.Things.Include(t => t.user).FirstOrDefaultAsync();
             if (id != thing.id)
             {
                 return BadRequest();
             }
+
+            thing.name = name;
+            thing.price = price;
+            thing.photo = photo;
+            thing.photoBill = photoBill;
+            thing.quantity = quantity;
+            thing.date = date;
+            thing.discription = disc;
+            thing.user.Firstname = userFN;
+            thing.user.Lastname = userLN;
+
+            foreach (user users in _context.Users.ToList())
+            {
+                if (users.Firstname == userFN && users.Lastname == userLN)
+                {
+
+                    thing.userid = users.id;
+                    break;
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+
 
             _context.Entry(thing).State = EntityState.Modified;
 
@@ -126,7 +153,7 @@ namespace Minecraft_5._0.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Route("new")]
         [HttpPost]
-        public async Task<ActionResult<thing>> Postthing(string name, int price, string photo, string photoBill, int quantity, DateTime? date, string disc, string userFN, string userLN) 
+        public async Task<ActionResult<thing>> Postthing(string name, int price, string photo, string photoBill, int quantity, DateTime? date, string disc, string userFN, string userLN)
         {
             thing thing = new();
             user user = new();
@@ -136,14 +163,14 @@ namespace Minecraft_5._0.Controllers
                 {
 
                     thing.userid = users.id;
-
+                    break;
                 }
                 else
                 {
-                    return NotFound();                   
+                    return NotFound();
                 }
             }
-            
+
             thing.name = name;
             thing.price = price;
             thing.photo = photo;
@@ -152,9 +179,9 @@ namespace Minecraft_5._0.Controllers
             thing.quantity = quantity;
             thing.discription = disc;
 
-            _context.Entry(thing).State=EntityState.Added;
+            _context.Entry(thing).State = EntityState.Added;
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetThings", new { id = thing.id }, thing);  
+            return CreatedAtAction("GetThings", new { id = thing.id }, thing);
         }
 
         // DELETE: api/items/5
