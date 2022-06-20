@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Minecraft_5._0.Data;
 
 namespace Minecraft_5._0.Migrations
 {
     [DbContext(typeof(AppDBContent))]
-    partial class AppDBContentModelSnapshot : ModelSnapshot
+    [Migration("20220620085424_initial_1")]
+    partial class initial_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,10 +37,10 @@ namespace Minecraft_5._0.Migrations
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("photoBillsrc")
+                    b.Property<string>("photo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("photosrc")
+                    b.Property<string>("photoBill")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("price")

@@ -46,16 +46,13 @@ namespace Minecraft_5._0.Controllers
         // PUT: api/users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> Putuser(int id, string userFN, string userLN)
+        public async Task<IActionResult> Putuser(int id, user user)
         {
-            var user = await _context.Users.Include(u => u.things).FirstOrDefaultAsync();
+            user = await _context.Users.Include(u => u.things).FirstOrDefaultAsync();
             if (id != user.id)
             {
                 return BadRequest();
             }
-
-            user.Firstname = userFN;
-            user.Lastname = userLN;
             _context.Entry(user).State = EntityState.Modified;
 
             try

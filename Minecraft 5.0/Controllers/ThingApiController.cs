@@ -14,8 +14,6 @@ using Minecraft_5._0.Data.Interfaces;
 using Minecraft_5._0.Data.Models;
 using Minecraft_5._0.Data.Services;
 using Minecraft_5._0.Data.Wrappers;
-using Minecraft_5._0.Controllers;
-using PagedList;
 
 namespace Minecraft_5._0.Controllers
 {
@@ -49,7 +47,7 @@ namespace Minecraft_5._0.Controllers
 
             if (photoBill)
             {
-                things = things.Where(t => t.photoBill != null);
+                things = things.Where(t => t.photoBillsrc != null);
             }
             if (userFN != null && userLN != null)
             {
@@ -95,38 +93,14 @@ namespace Minecraft_5._0.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         // Меняет уже добавленную запись
         [HttpPut("{id}")]
-        public async Task<IActionResult> Putthing(int id, string name, decimal price, string photo, string photoBill, int quantity, DateTime date, string disc, string userFN, string userLN)
+        public async Task<IActionResult> Putthing(int id, thing thing)
         {
-            var thing = await _context.Things.Include(t => t.user).FirstOrDefaultAsync();
             if (id != thing.id)
             {
                 return BadRequest();
             }
 
-            thing.name = name;
-            thing.price = price;
-            thing.photo = photo;
-            thing.photoBill = photoBill;
-            thing.quantity = quantity;
-            thing.date = date;
-            thing.discription = disc;
-            thing.user.Firstname = userFN;
-            thing.user.Lastname = userLN;
-
-            foreach (user users in _context.Users.ToList())
-            {
-                if (users.Firstname == userFN && users.Lastname == userLN)
-                {
-
-                    thing.userid = users.id;
-                    break;
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-
+            
 
             _context.Entry(thing).State = EntityState.Modified;
 
@@ -153,32 +127,13 @@ namespace Minecraft_5._0.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Route("new")]
         [HttpPost]
-        public async Task<ActionResult<thing>> Postthing(string name, int price, string photo, string photoBill, int quantity, DateTime? date, string disc, string userFN, string userLN)
+        public async Task<ActionResult<thing>> Postthing(thing thing)
         {
-            thing thing = new();
-            user user = new();
-            foreach (user users in _context.Users.ToList())
+            thing.photosrc = thing.getSrcphoto(thing);
+            if (thing.photoBill != null)
             {
-                if (users.Firstname == userFN && users.Lastname == userLN)
-                {
-
-                    thing.userid = users.id;
-                    break;
-                }
-                else
-                {
-                    return NotFound();
-                }
+                thing.photoBillsrc = thing.getSrcphotoBill(thing);
             }
-
-            thing.name = name;
-            thing.price = price;
-            thing.photo = photo;
-            thing.photoBill = photoBill;
-            if (date == null) { thing.date = DateTime.Now; }
-            thing.quantity = quantity;
-            thing.discription = disc;
-
             _context.Entry(thing).State = EntityState.Added;
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetThings", new { id = thing.id }, thing);
