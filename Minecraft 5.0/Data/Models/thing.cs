@@ -26,9 +26,10 @@ namespace Minecraft_5._0.Data.Models
         [ForeignKey("user")]
         public int userid { get; set; }
         public virtual user user { get; set; }
-        public string getSrcphoto(thing thing)
+        public string getSrcphoto()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(),"photo/photothing");
+
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "photo/photothing");
 
             //create folder if not exist
             if (!Directory.Exists(path))
@@ -44,7 +45,7 @@ namespace Minecraft_5._0.Data.Models
             }
             return fileNameWithPath;
         }
-        public string getSrcphotoBill(thing thing)
+        public string getSrcphotoBill()
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "photo/photoBill");
 

@@ -14,6 +14,12 @@ using Minecraft_5._0.Data.Interfaces;
 using Minecraft_5._0.Data.Models;
 using Minecraft_5._0.Data.Services;
 using Minecraft_5._0.Data.Wrappers;
+using IronBarCode;
+using System.Drawing;
+using System.IO;
+using System.Text;
+using QRCoder;
+using ZXing;
 
 namespace Minecraft_5._0.Controllers
 {
@@ -28,17 +34,17 @@ namespace Minecraft_5._0.Controllers
             this.uriService = uriService;
         }
 
-        // GET: api/items
+        // GET: api/things
         // Выдает все записи или по строке поиска
         [HttpGet]
         public async Task<ActionResult<IEnumerable<thing>>> GetThings([FromQuery] PaginationFilter filter, string searchstr, string userFN, string userLN, int quantity, decimal? priceLow, decimal? priceHigh, DateTime? minDate, DateTime? maxDate, bool photoBill)
         {
             var things = from t in _context.Things.Include(t => t.user)
                          select t;
-            priceLow = priceLow == null ? _context.Things.Min(t => t.price) : priceLow;
-            priceHigh = priceHigh == null ? _context.Things.Max(t => t.price) : priceHigh;
-            minDate = minDate == null ? _context.Things.Min(t => t.date) : minDate;
-            maxDate = maxDate == null ? _context.Things.Max(t => t.date) : maxDate;
+            //priceLow = priceLow == null ? _context.Things.Min(t => t.price) : priceLow;
+            //priceHigh = priceHigh == null ? _context.Things.Max(t => t.price) : priceHigh;
+            //minDate = minDate == null ? _context.Things.Min(t => t.date) : minDate;
+            //maxDate = maxDate == null ? _context.Things.Max(t => t.date) : maxDate;
             var route = Request.Path.Value;
             if (!String.IsNullOrEmpty(searchstr))
             {
@@ -76,32 +82,48 @@ namespace Minecraft_5._0.Controllers
             return Ok(pagedResponse);
         }
 
-        // GET: api/items/5
+        // GET: api/things/5
         // Выдает запись по ID
         [HttpGet("{id}")]
-        public async Task<ActionResult<thing>> GetThing(int id)
+        public string GetQr(int id)
         {
-            var thing = await _context.Things.Include(t => t.user).Where(t => t.id == id).FirstOrDefaultAsync();
+            var thing = _context.Things.Include(t => t.user).Where(t => t.id == id).FirstOrDefault();
+            string str = $"Name: {thing.name} \nUser: {thing.user.Firstname} {thing.user.Lastname}\nPrice: {thing.price}\nDate: {thing.date}\nDiscription: {thing.discription}";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "photo/qr");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            string fileName = Convert.ToString(Guid.NewGuid()) + ".jpg";
+            string fileNameWithPath = Path.Combine(path, fileName);
             if (thing == null)
             {
-                return NotFound();
+                return null;
             }
-            return thing;
+
+            byte[] BinaryData = Encoding.UTF8.GetBytes(str);
+            QRCodeWriter.CreateQrCode(BinaryData, 200).SaveAsPng(fileNameWithPath);
+            return fileNameWithPath;
         }
 
-        // PUT: api/items/5
+        // PUT: api/things/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         // Меняет уже добавленную запись
         [HttpPut("{id}")]
         public async Task<IActionResult> Putthing(int id, thing thing)
         {
+            string pt = thing.photosrc;
+            string ptb = thing.photoBillsrc;
             if (id != thing.id)
             {
                 return BadRequest();
             }
-
-            
-
+            if (pt != null) {
+                System.IO.File.Delete(thing.photosrc);
+            }
+            thing.photosrc = thing.getSrcphoto();
+            if (ptb != null) {
+                System.IO.File.Delete(thing.photoBillsrc);
+            }
+            thing.photoBillsrc = thing.getSrcphotoBill();
             _context.Entry(thing).State = EntityState.Modified;
 
             try
@@ -123,23 +145,27 @@ namespace Minecraft_5._0.Controllers
             return NoContent();
         }
 
-        // POST: api/items/new
+        // POST: api/things/new
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Route("new")]
         [HttpPost]
         public async Task<ActionResult<thing>> Postthing(thing thing)
         {
-            thing.photosrc = thing.getSrcphoto(thing);
+            thing.photosrc = thing.getSrcphoto();
             if (thing.photoBill != null)
             {
-                thing.photoBillsrc = thing.getSrcphotoBill(thing);
+                thing.photoBillsrc = thing.getSrcphotoBill();
+            }
+            if (thing.date == null)
+            {
+                thing.date = DateTime.Now;
             }
             _context.Entry(thing).State = EntityState.Added;
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetThings", new { id = thing.id }, thing);
         }
 
-        // DELETE: api/items/5
+        // DELETE: api/things/5
         // Удаляет запись по ID
         [HttpDelete("{id}")]
         public async Task<IActionResult> Deletething(int id)
@@ -149,13 +175,42 @@ namespace Minecraft_5._0.Controllers
             {
                 return NotFound();
             }
-
+            if (thing.photosrc != null)
+            {
+                System.IO.File.Delete(thing.photosrc);
+            }
+            if (thing.photoBillsrc != null)
+            {
+                System.IO.File.Delete(thing.photoBillsrc);
+            }
             _context.Things.Remove(thing);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+        [Route ("delete")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAll()
+        {
+            for (int i = 0; i < _context.Things.Count(); i++)
+            {
+                var thing = _context.Things.FirstOrDefault();
+                string dirphoto = thing.photosrc;
+                if (dirphoto != null)
+                {
+                    System.IO.File.Delete(dirphoto);
+                }
+                string dirbill = thing.photoBillsrc;
+                if (dirbill != null)
+                {
+                    System.IO.File.Delete(dirbill);
+                }
+            }
+            _context.Things.RemoveRange(_context.Things);
+            await _context.SaveChangesAsync();
 
+            return NoContent();
+        }
         private bool ItemExists(int id)
         {
             return _context.Things.Any(e => e.id == id);
