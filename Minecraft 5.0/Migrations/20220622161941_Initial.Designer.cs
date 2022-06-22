@@ -10,8 +10,8 @@ using Minecraft_5._0.Data;
 namespace Minecraft_5._0.Migrations
 {
     [DbContext(typeof(AppDBContent))]
-    [Migration("20220620085424_initial_1")]
-    partial class initial_1
+    [Migration("20220622161941_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,10 +37,10 @@ namespace Minecraft_5._0.Migrations
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("photo")
+                    b.Property<string>("photoBillsrc")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("photoBill")
+                    b.Property<string>("photosrc")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("price")

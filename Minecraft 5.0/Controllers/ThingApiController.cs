@@ -98,7 +98,7 @@ namespace Minecraft_5._0.Controllers
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             string fileName = Convert.ToString(Guid.NewGuid()) + ".jpg";
-            
+
             string fileNameWithPath = Path.Combine(path, fileName);
             if (thing == null)
             {
@@ -115,6 +115,8 @@ namespace Minecraft_5._0.Controllers
 
         public void DeleteQR(string path)
         {
+            path = "wwwroot/" + path;
+            path = Path.Combine(Directory.GetCurrentDirectory(), path);
             System.IO.File.Delete(path);
         }
 
@@ -124,19 +126,20 @@ namespace Minecraft_5._0.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Putthing(int id, thing thing)
         {
-            
+
             if (id != thing.id)
             {
                 return BadRequest();
             }
             string pt = thing.photosrc;
             string ptb = thing.photoBillsrc;
-            Console.WriteLine(pt + "\n" + ptb);
-            if (pt != null) {
+            if (pt != null)
+            {
                 System.IO.File.Delete(pt);
             }
             thing.photosrc = thing.getSrcphoto();
-            if (ptb != null) {
+            if (ptb != null)
+            {
                 System.IO.File.Delete(ptb);
             }
             thing.photoBillsrc = thing.getSrcphotoBill();
@@ -208,7 +211,7 @@ namespace Minecraft_5._0.Controllers
 
             return NoContent();
         }
-        [Route ("delete")]
+        [Route("delete")]
         [HttpDelete]
         public async Task<IActionResult> DeleteAll()
         {

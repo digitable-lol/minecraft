@@ -12,6 +12,5 @@ namespace Minecraft_5._0.Data
         }
         public DbSet<thing> Things { get; set; }
         public DbSet<user> Users { get; set; } 
-         
     }
 }

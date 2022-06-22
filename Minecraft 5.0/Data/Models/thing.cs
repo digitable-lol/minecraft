@@ -35,7 +35,7 @@ namespace Minecraft_5._0.Data.Models
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            string fileName = Convert.ToString(Guid.NewGuid()) + ".jpg";           
+            string fileName = Convert.ToString(Guid.NewGuid()) + ".jpg";
             string fileNameWithPath = Path.Combine(path, fileName);
             using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
             {

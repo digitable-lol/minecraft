@@ -78,11 +78,8 @@ namespace Minecraft_5._0.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Route("new")]
         [HttpPost]
-        public async Task<ActionResult<user>> Postuser(string userFN, string userLN)
+        public async Task<ActionResult<user>> Postuser(user user)
         {
-            user user = new();
-            user.Firstname = userFN;
-            user.Lastname = userLN;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
