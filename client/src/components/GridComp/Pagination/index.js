@@ -4,7 +4,7 @@ import { Pagination } from 'react-bootstrap'
 
 export default function PaginationComp({ setPageNum, pageNum, totalPages }) {
     return (
-        <Pagination style={{justifyContent:"center", marginTop:"50px"}}>
+        <Pagination style={{justifyContent:"center", marginTop:"50px", paddingBottom: "200px"}}>
 
             <Pagination.First onClick={() => setPageNum(1)} />
             <Pagination.Prev disabled={pageNum - 1 <= 1} onClick={() => setPageNum(pageNum - 1)} />

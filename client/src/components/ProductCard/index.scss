@@ -5,7 +5,8 @@
     box-shadow: .8px .9px 3px grey;
     border-radius: 10px;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 10px;    
+    height: 100%;
 
     &_delete{
         position: absolute;
@@ -42,7 +43,7 @@
     &_buttons {
         display: flex;
         justify-content: space-between;
-
+        margin-top: auto;
     }
 
     //.btn{
