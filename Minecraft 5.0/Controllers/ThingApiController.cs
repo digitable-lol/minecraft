@@ -132,7 +132,7 @@ namespace Minecraft_5._0.Controllers
                 return BadRequest();
             }
             string pt = thing.photosrc;
-            string ptb = thing.photoBillsrc;
+            string ptb = thing.photoBillsrc;                                                                                                                                                                                                                                                                  
             if (pt != null)
             {
                 System.IO.File.Delete(pt);
@@ -142,7 +142,10 @@ namespace Minecraft_5._0.Controllers
             {
                 System.IO.File.Delete(ptb);
             }
-            thing.photoBillsrc = thing.getSrcphotoBill();
+            if (thing.photoBill != null)
+            {
+                thing.photoBillsrc = thing.getSrcphotoBill();
+            }
             _context.Entry(thing).State = EntityState.Modified;
 
             try
