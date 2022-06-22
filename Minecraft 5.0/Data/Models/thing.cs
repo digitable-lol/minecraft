@@ -29,31 +29,29 @@ namespace Minecraft_5._0.Data.Models
         public string getSrcphoto()
         {
 
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "photo/photothing");
+            string path = "wwwroot/photo/photothing";
 
             //create folder if not exist
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            //get file extension
-            string fileName = Convert.ToString(Guid.NewGuid()) + ".jpg";
+            string fileName = Convert.ToString(Guid.NewGuid()) + ".jpg";           
             string fileNameWithPath = Path.Combine(path, fileName);
-
             using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
             {
                 this.photo.CopyTo(stream);
             }
+            path = "photo/photothing";
+            fileNameWithPath = Path.Combine(path, fileName);
             return fileNameWithPath;
         }
         public string getSrcphotoBill()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "photo/photoBill");
+            string path = "wwwroot/photo/photoBill";
 
             //create folder if not exist
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
-
-            //get file extension
 
             string fileName = Convert.ToString(Guid.NewGuid()) + ".jpg";
             string fileNameWithPath = Path.Combine(path, fileName);
@@ -62,6 +60,8 @@ namespace Minecraft_5._0.Data.Models
             {
                 this.photoBill.CopyTo(stream);
             }
+            path = "photo/photoBill";
+            fileNameWithPath = Path.Combine(path, fileName);
             return fileNameWithPath;
         }
     }
