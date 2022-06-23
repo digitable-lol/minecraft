@@ -17,7 +17,7 @@ import Footer from '../FooterComp/FooterComp'
 //     gap: "25px"
 // }
 
-export default function GridComp({isDeleting, getCards, cards, pageNum, setPageNum, totalPages, setTotalPages}) {
+export default function GridComp({isDeleting, getCards, cards, pageNum, setPageNum, totalPages, setTotalPages, usersList}) {
     
     // function getCards() {
     //     axios.get(`https://localhost:5001/api/things?PageNumber=${pageNum}&PageSize=6`)
@@ -43,7 +43,7 @@ export default function GridComp({isDeleting, getCards, cards, pageNum, setPageN
                     {cards.map((card) => {
                         return (
                             <Col md={5} sm={5} xs={12} key={card.id}>
-                                <ProductCard data={card} getCards={getCards} isDeleting={isDeleting} />
+                                <ProductCard usersList={usersList} data={card} getCards={getCards} isDeleting={isDeleting} />
                             </Col>
                         )
                     })}

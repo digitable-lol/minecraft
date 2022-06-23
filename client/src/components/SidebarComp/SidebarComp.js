@@ -7,6 +7,7 @@ import axios from "axios";
 import InputRange from "react-input-range";
 import 'react-input-range/lib/css/index.css';
 import NewUserModal from "../NewUserModal";
+import { URL } from "../../App";
 
 
 export default function NavbarComp({
@@ -17,14 +18,13 @@ export default function NavbarComp({
     handleShowFilter, 
     handleCloseFilter, 
     filter, 
-    setFilter
+    setFilter,
+    usersList
 }) {
 
-    const [minmax, setMinmax] = useState({min: 0, max: 100000})
+    const [minmax, setMinmax] = useState({min: 0, max: 1000000})
 
     const [newShowUserModal, setShowNewUserModal] = useState(false)
-
-    const [usersList, setUsersList] = useState([])
 
     const getCardsWithFilters = () => {
         setFilter({...filter, isFiltered: true})
@@ -44,12 +44,11 @@ export default function NavbarComp({
     }
 
     const deleteAll = () => {
-      axios.delete('https://localhost:5001/api/things/delete').then(handleCloseFilter)
+      axios.delete(`${URL}/api/things/delete`).then(handleCloseFilter)
     }
 
-    useEffect(() => {
-      axios.get('https://localhost:5001/api/users').then((res)=> {setUsersList(res.data)})
-    }, [])
+
+    let selectedUser = usersList.find(item => item.id === filter.userId)
 
 
     return (
@@ -63,7 +62,12 @@ export default function NavbarComp({
                     <Form.Control value={filter.quantity} onChange={(e) => {setFilter({...filter, quantity: e.target.value, isFiltered: false})}}/>
                     
                     <FormLabel>Фото чека: </FormLabel>
-                    <Form.Check value={filter.quantity} onChange={(e) => {setFilter({...filter, photoBill: e.target.checked, isFiltered: false})}}/>
+                    {/* <Form.Check value={filter.quantity} onChange={(e) => {setFilter({...filter, photoBill: e.target.checked, isFiltered: false})}}/> */}
+                    <Form.Select onChange={(e) => {setFilter({...filter, photoBill: e.target.value, isFiltered: false})}}>
+                        <option value={''}>Не важно</option>
+                        <option value={true}>Есть</option>
+                        <option value={false}>Нет</option>
+                    </Form.Select>
                     
                     <div style={{margin: "25px 0"}}>
                         <InputRange
@@ -81,8 +85,9 @@ export default function NavbarComp({
                     <DatePicker value={filter.minDate} onChange={(e)=> setFilter({...filter, minDate: e.toDateString(), isFiltered: false})}/>
                     
                     <FormLabel>Max Date: {new Date(filter.maxDate).toLocaleString}</FormLabel> 
-                    <DatePicker value={filter.maxDate} onChange={(e)=> setFilter({...filter, maxDate: e.toDateString(), isFiltered: false})}/>
+                    <DatePicker locale="ru" value={filter.maxDate} onChange={(e)=> setFilter({...filter, maxDate: e.toDateString(), isFiltered: false})}/>
                     <Form.Select onChange={e => {setFilter({...filter, userId: e.target.value, isFiltered: false})}} style={{marginTop: "25px"}}>
+                        <option value={''}>Выберите пользователя</option> 
                         {
                             usersList.map((item) => {
                                 return <option value={item.id}>{item.firstname} {item.lastname}</option> 

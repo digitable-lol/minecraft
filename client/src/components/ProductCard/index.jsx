@@ -1,22 +1,27 @@
 import axios from 'axios'
+import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
+import { URL } from '../../App'
 import "./index.scss"
+import 'moment/locale/ru' 
 
-const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting}) => {
+moment.locale('ru')
+
+
+const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting, usersList}) => {
 
     const { id, name, userid, user, date, price, comment, photosrc, quantity, photoBillsrc } = data
     const [showButtons, setShowButtons] = useState(false)
     const [canEdit, setCanEdit] = useState(isPost)
     const [nameState, setNameState] = useState(name)
-    const [useridState, setUseridState] = useState(userid)
+    const [useridState, setUseridState] = useState(userid ?? 1)
     const [dateState, setDateState] = useState(date)
     const [priceState, setPriceState] = useState(price)
     const [commentState, setCommentState] = useState(comment)
     const [quantityState, setQuantityState] = useState(quantity)
     const [fileState, setFileState] = useState()
-    const [photoBillSrcState, setPhotoBillSrcState] = useState()
-    const [usersList, setUsersList] = useState([])
+    const [photoBillState, setPhotoBillState] = useState()
 
     const formData = new FormData()
 
@@ -30,22 +35,14 @@ const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting}) => 
         formData.append("date", dateState)
         formData.append("price", priceState)
         formData.append("disc", commentState)
-        formData.append("photo", fileState)
-        formData.append("photoBillsrc", photoBillSrcState)
-        formData.append("userid", 1)
-        formData.append("quantity", quantityState)
+        fileState && formData.append("photo", fileState)
+        photoBillState && formData.append("photoBill", photoBillState)
         formData.append("userid", useridState)
-        formData.append("photosrc", photosrc)
+        formData.append("quantity", quantityState)
+        photoBillsrc && formData.append("photosrc", photoBillsrc)
 
-        console.log(useridState);
-        // &${nameState}&userid=${useridState}&date=${dateState}&price=${priceState}&disc=${commentState}&quantity=${quantityState}`
-        axios.put(`https://localhost:5001/api/things/${idProduct}`,
-            data,
-            {
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
-                }}
+        axios.put(`${URL}/api/things/${idProduct}`,
+            data
         ).then(()=> setCanEdit(false))
     }
 
@@ -55,23 +52,17 @@ const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting}) => 
         formData.append("price", priceState)
         formData.append("disc", commentState)
         formData.append("photo", fileState)
-        formData.append("photoBillsrc", photoBillSrcState)
+        formData.append("photoBill", photoBillState)
         formData.append("quantity", quantityState)
         formData.append("userid", useridState)
 
-        axios.post(`https://localhost:5001/api/things/new`, formData)
+        axios.post(`${URL}/api/things/new`, formData)
                     .then(()=>(setShow(false), getCards()))
     }
 
-    // ?name=${nameState}&userFN=${firstNameState}&userLN=${lastNameState}&date=${dateState}&price=${priceState}&disc=${commentState}&quantity=${quantityState}
-
-    useEffect(() => {
-        axios.get('https://localhost:5001/api/users').then((res)=> {setUsersList(res.data)})
-      }, [])
-
 
     const deleteProduct = (idProduct)=>{
-        axios.delete(`https://localhost:5001/api/things/${idProduct}`).then(()=>getCards())
+        axios.delete(`${URL}/api/things/${idProduct}`).then(()=>getCards())
     }
 
 
@@ -82,9 +73,8 @@ const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting}) => 
 
     const fileCheckChange = () =>{
         formData.append("photoBillsrc", fileCheckInput.current.files[0])
-        setPhotoBillSrcState(formData.get("photoBillsrc"))
+        setPhotoBillState(formData.get("photoBillsrc"))
     }
-
 
     return (
         <div className='card'>
@@ -102,13 +92,11 @@ const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting}) => 
                         <label>Фото чека: </label>
                         <input type="file" ref={fileCheckInput} onChange={e => fileCheckChange()} />
                     </>}
-                    <img src={`https://localhost:5001/${photosrc}`} className='card_info_left__image' alt={name} />
-                    {photoBillsrc && <img src={photoBillsrc} className='card_info_left__image' alt={name} />}
+                    <img src={`${URL}/${photosrc}`} className='card_info_left__image' alt={name} />
+                    {!(photoBillsrc === "undefined") && photoBillsrc ? <img src={`${URL}/${photoBillsrc}`} className='card_info_left__image' alt={name} /> : null}
                 </div>
                 <div className='card_info_right'>
-                    {/* <p>Владелец: {canEdit ? <input type="text" value={ownerState} onChange={(e) => setOwnerState(e.target.value)}/> : ownerState}</p> */}
-                    {/* <p>ID владельца: {canEdit ? <input type="text" value={useridState} onChange={(e) => setUseridState(e.target.value)}/> : dateState}</p> */}
-                    <p>Имя владельца: {canEdit ?
+                    <p>Владелец: {canEdit ?
                      <Form.Select 
                         onChange={e => {setUseridState(e.target.value)}}
                         style={{marginTop: "25px"}}
@@ -119,7 +107,7 @@ const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting}) => 
                             })
                         }
                     </Form.Select> : `${user.firstname} ${user.lastname}`}</p>
-                    <p>Дата: {canEdit ? <input type="text" value={dateState} onChange={(e) => setDateState(e.target.value)}/> : dateState}</p>
+                    <p>Дата: {canEdit ? <input type="text" value={dateState} onChange={(e) => setDateState(e.target.value)}/> : moment().subtract(dateState, 'days').calendar()}</p>
                     <p>Стоимость: {canEdit ? <input type="text" value={priceState} onChange={(e) => setPriceState(e.target.value)}/> : priceState}</p>
                     <p>Количество: {canEdit ? <input type="text" value={quantityState} onChange={(e) => setQuantityState(e.target.value)}/> : quantityState}</p>
                     <p>Комментарий: {canEdit ? <input type="text" value={commentState} onChange={(e) => setCommentState(e.target.value)}/> : commentState}</p>

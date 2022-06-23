@@ -2,7 +2,7 @@ import React from 'react'
 import ProductCard from '../ProductCard'
 import './index.scss'
 
-const ModalComp = ({setShow, getCards}) => {
+const ModalComp = ({setShow, getCards, usersList}) => {
 
     const data={ 
         name:'',
@@ -16,7 +16,7 @@ const ModalComp = ({setShow, getCards}) => {
         <div className='modal' onClick={()=>setShow(false)}>
             <div className='modal-content' onClick={(e)=>e.stopPropagation()}>
                 <div className='modal-body'>
-                    <ProductCard data={data} isPost setShow={setShow} getCards={getCards}/>
+                    <ProductCard data={data} usersList={usersList} isPost setShow={setShow} getCards={getCards}/>
                 </div>
             </div>
         </div>
