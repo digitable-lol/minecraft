@@ -110,15 +110,6 @@ namespace Minecraft_5._0.Controllers
             fileNameWithPath = Path.Combine(path, fileName);
             return fileNameWithPath;
         }
-        [Route("DeleteQR")]
-        [HttpDelete]
-
-        public void DeleteQR(string path)
-        {
-            path = "wwwroot/" + path;
-            path = Path.Combine(Directory.GetCurrentDirectory(), path);
-            System.IO.File.Delete(path);
-        }
 
         // PUT: api/things/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -126,27 +117,34 @@ namespace Minecraft_5._0.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Putthing(int id, thing thing)
         {
-
-            if (id != thing.id)
+            var thing1 = _context.Things.Where(thing => thing.id == id).FirstOrDefault();
+            if (thing1 == null)
             {
                 return BadRequest();
             }
-            string pt = thing.photosrc;
-            string ptb = thing.photoBillsrc;                                                                                                                                                                                                                                                                  
-            if (pt != null)
+            if (thing.photo != null)
             {
-                System.IO.File.Delete(pt);
-            }
-            thing.photosrc = thing.getSrcphoto();
-            if (ptb != null)
-            {
-                System.IO.File.Delete(ptb);
+                string pathp = "wwwroot/" + thing1.photosrc;
+                pathp = Path.Combine(Directory.GetCurrentDirectory(), pathp);
+                System.IO.File.Delete(pathp);
+                thing1.photo = thing.photo;
+                thing1.photosrc = thing.getSrcphoto();
             }
             if (thing.photoBill != null)
             {
-                thing.photoBillsrc = thing.getSrcphotoBill();
+                string pathb = "wwwroot/" + thing1.photoBillsrc;
+                pathb = Path.Combine(Directory.GetCurrentDirectory(), pathb);
+                System.IO.File.Delete(pathb);
+                thing1.photoBill = thing.photoBill;
+                thing1.photoBillsrc = thing.getSrcphotoBill();
             }
-            _context.Entry(thing).State = EntityState.Modified;
+            if (thing.name!= null) { thing1.name = thing.name; }
+            if (thing.price!= null) { thing1.price = thing.price; }
+            if (thing.date != null) { thing1.date = thing.date; }
+            if (thing.quantity != null) { thing1.quantity = thing.quantity;}
+            thing1.userid = thing.userid;
+            if (thing.discription != null) { thing1.discription = thing.discription; }
+            _context.Entry(thing1).State = EntityState.Modified;
 
             try
             {
@@ -163,7 +161,6 @@ namespace Minecraft_5._0.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
@@ -214,6 +211,17 @@ namespace Minecraft_5._0.Controllers
 
             return NoContent();
         }
+
+        [Route("DeleteQR")]
+        [HttpDelete]
+
+        public void DeleteQR(string path)
+        {
+            path = "wwwroot/" + path;
+            path = Path.Combine(Directory.GetCurrentDirectory(), path);
+            System.IO.File.Delete(path);
+        }
+
         [Route("delete")]
         [HttpDelete]
         public async Task<IActionResult> DeleteAll()
