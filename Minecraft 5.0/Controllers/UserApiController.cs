@@ -45,7 +45,7 @@ namespace Minecraft_5._0.Controllers
 
         // PUT: api/users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Putuser(int id, user user)
         {
             user = await _context.Users.Include(u => u.things).FirstOrDefaultAsync();
@@ -87,7 +87,7 @@ namespace Minecraft_5._0.Controllers
         }
 
         // DELETE: api/UserApi/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Deleteuser(int id)
         {
             var user = await _context.Users.FindAsync(id);

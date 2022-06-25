@@ -20,7 +20,9 @@ using System.Text;
 using System.Drawing.Imaging;
 using System.Collections;
 using IronBarCode;
-
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
+using Minecraft_5._0.Data.Exception;
 
 namespace Minecraft_5._0.Controllers
 {
@@ -40,39 +42,8 @@ namespace Minecraft_5._0.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<thing>>> GetThings([FromQuery] PaginationFilter filter, string searchstr, int? userid, int quantity, decimal? priceLow, decimal? priceHigh, DateTime? minDate, DateTime? maxDate, bool photoBill)
         {
-            var things = from t in _context.Things.Include(t => t.user)
-                         select t;
-            priceLow = priceLow == null ? _context.Things.Min(t => t.price) : priceLow;
-            priceHigh = priceHigh == null ? _context.Things.Max(t => t.price) : priceHigh;
-            minDate = minDate == null ? _context.Things.Min(t => t.date) : minDate;
-            maxDate = maxDate == null ? _context.Things.Max(t => t.date) : maxDate;
+            var things = FiltrationService.filtration(_context, searchstr, userid, quantity, priceLow, priceHigh, minDate, maxDate, photoBill);
             var route = Request.Path.Value;
-            if (!String.IsNullOrEmpty(searchstr))
-            {
-                things = things.Where(t => t.name.ToUpper().Contains(searchstr.ToUpper()));
-            }
-
-            if (photoBill)
-            {
-                things = things.Where(t => t.photoBillsrc != null);
-            }
-            if (userid != null)
-            {
-                things = things.Where(t => t.userid == userid);
-            }
-            if (quantity != 0)
-            {
-                things = things.Where(t => t.quantity == quantity);
-            }
-            if (priceLow != null || priceHigh != null)
-            {
-                things = things.Where(t => (t.price <= priceHigh) && (t.price >= priceLow));
-            }
-
-            if (minDate != null || maxDate != null)
-            {
-                things = things.Where(t => (t.date >= minDate) && (t.date <= maxDate));
-            }
             var thingCount = things.ToList();
             things = things.Include(t => t.user)
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
@@ -85,36 +56,17 @@ namespace Minecraft_5._0.Controllers
 
         // GET: api/things/5
         // Выдает запись по ID
-        [HttpGet("{id}")]
+        [HttpGet("getQr/{id}")]
         public string GetQr(int id)
         {
-            var thing = _context.Things.Include(t => t.user).Where(t => t.id == id).FirstOrDefault();
-            string str = $"Name: {thing.name} \nUser: {thing.user.Firstname} {thing.user.Lastname}\nPrice: {thing.price}\nDate: {thing.date}\nDiscription: {thing.discription}";
-            string path = "wwwroot/photo/qr";
-            if (str.Length >= 4296)
-            {
-                str = $"Name: {thing.name} \nUser: {thing.user.Firstname} {thing.user.Lastname}\nPrice: {thing.price}\nDate: {thing.date}";
-            }
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            string fileName = Convert.ToString(Guid.NewGuid()) + ".jpg";
-
-            string fileNameWithPath = Path.Combine(path, fileName);
-            if (thing == null)
-            {
-                return null;
-            }
-            byte[] BinaryData = Encoding.UTF8.GetBytes(str);
-            QRCodeWriter.CreateQrCode(BinaryData, 200).SaveAsPng(fileNameWithPath);
-            path = "photo/qr";
-            fileNameWithPath = Path.Combine(path, fileName);
-            return fileNameWithPath;
+            QrService.fileNameWithPath = QrService.GetQr(id, _context);
+            return QrService.fileNameWithPath;
         }
 
         // PUT: api/things/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         // Меняет уже добавленную запись
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Putthing(int id, thing thing)
         {
             var thing1 = _context.Things.Where(thing => thing.id == id).FirstOrDefault();
@@ -170,7 +122,14 @@ namespace Minecraft_5._0.Controllers
         [HttpPost]
         public async Task<ActionResult<thing>> Postthing(thing thing)
         {
-            thing.photosrc = thing.getSrcphoto();
+            try
+            {
+                thing.photosrc = thing.getSrcphoto();
+            }
+            catch (NullReferenceException e)
+            {
+                throw new MyCustomException("Нельзя добавить предмет без фото", e);
+            }
             if (thing.photoBill != null)
             {
                 thing.photoBillsrc = thing.getSrcphotoBill();
@@ -186,7 +145,7 @@ namespace Minecraft_5._0.Controllers
 
         // DELETE: api/things/5
         // Удаляет запись по ID
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Deletething(int id)
         {
             var thing = await _context.Things.FindAsync(id);
@@ -215,14 +174,12 @@ namespace Minecraft_5._0.Controllers
         [Route("DeleteQR")]
         [HttpDelete]
 
-        public void DeleteQR(string path)
+        public void DeleteQR()
         {
-            path = "wwwroot/" + path;
-            path = Path.Combine(Directory.GetCurrentDirectory(), path);
-            System.IO.File.Delete(path);
+            QrService.DeleteQR();
         }
 
-        [Route("delete")]
+        [Route("DeleteAll")]
         [HttpDelete]
         public async Task<IActionResult> DeleteAll()
         {

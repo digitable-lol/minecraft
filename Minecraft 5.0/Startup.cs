@@ -19,6 +19,7 @@ using System.Reflection;
 using System.IO;
 using Minecraft_5._0.Data.Interfaces;
 using Minecraft_5._0.Data.Services;
+using System.Text;
 
 namespace Minecraft_5._0
 {
@@ -35,14 +36,44 @@ namespace Minecraft_5._0
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo 
                 {
                     Version = "v1",
                     Title = "SuperMinecraft",
-                    Description = "Ну мы тут чот делаем, даааа",
+                    Description = "<h1>Описание Endpoint'ов:</h1>  " +
+                    "<h2><b>ThingApi</b></h2>" +
+                    "<h3><b>Get: /api/things</b></h3>" +
+                    "Выдает все записи из таблицы Things по 6 штук на странице.\n" +
+                    "Фильтрует записи таблицы по таким критериям как:\n" +
+                    "Владелец \n" +
+                    "Количество\n" +
+                    "Цена\n" +
+                    "Дата\n" +
+                    "<h3><b>Get: /api/things/getQr/id</b></h3>" +
+                    "Генерирует Qr - код, который содержит в себе данные о конкретной указанной записи из таблицы Things\n\n" +
+                    "<h3><b>Put: /api/things/update/id </b></h3>" +
+                    "Обновляет указанную запись в таблице Things" +
+                    "<h3><b>Post: /api/things/new</b></h3>" +
+                    "Создет новую запись в таблице Things" +
+                    "<h3><b>Delete: /api/things/delete/id</b></h3> " +
+                    "Удаляет указанную запись в таблице Things" +
+                    "<h3><b>Delete: /api/things/DeleteQr</b></h3>" +
+                    "Удаляет Qr - код" +
+                    "<h3><b>Delete: /api/things/DeleteAll</b></h3>" +
+                    "Удаляет все записи в таблице Things" +
+                    "<h2><b>UserApi</b></h2>" +
+                    "<h3><b>Get: /api/users</b></h3>" +
+                    "Возвращает все записи в таблице Users" +
+                    "<h3><b>Get: /api/users/id</b></h3>" +
+                    "Возвращает указанную запись из таблицы Users" +
+                    "<h3><b>Put: /api/users/update/id</b></h3>" +
+                    "Обновляет указанную запись в таблице Users" +
+                    "<h3><b>Post: api/users/new</b></h3>" +
+                    "Добавляет новую запись в таблицу Users" +
+                    "<h3><b>Delete: api/users/delete/id</b></h3>" +
+                    "Удаляет указанную запись из таблицы Users и все записи, связанные с этой записью из таблицы Things",
                 });
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
