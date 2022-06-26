@@ -83,7 +83,7 @@ const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting, user
                     </div>}
             <div className='card_info'>
                 <div className='card_info_left'>
-                    <h2>{canEdit ? <input className="card_info_title" type="text" value={nameState} onChange={(e) => setNameState(e.target.value)}/> : nameState}</h2>
+                    <h2>Название{canEdit ? <input className="card_info_title" type="text" value={nameState} onChange={(e) => setNameState(e.target.value)}/> : nameState}</h2>
                     {canEdit && <>
                         <label>Фото товара: </label>
                         <input type="file" ref={fileInput} onChange={e => fileChange()} />
@@ -92,8 +92,8 @@ const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting, user
                         <label>Фото чека: </label>
                         <input type="file" ref={fileCheckInput} onChange={e => fileCheckChange()} />
                     </>}
-                    <img src={`${URL}/${photosrc}`} className='card_info_left__image' alt={name} />
-                    {!(photoBillsrc === "undefined") && photoBillsrc ? <img src={`${URL}/${photoBillsrc}`} className='card_info_left__image' alt={name} /> : null}
+                    {/* <img src={`${URL}/${photosrc}`} className='card_info_left__image' alt={name} />
+                    {!(photoBillsrc === "undefined") && photoBillsrc ? <img src={`${URL}/${photoBillsrc}`} className='card_info_left__image' alt={name} /> : null} */}
                 </div>
                 <div className='card_info_right'>
                     <p>Владелец: {canEdit ?

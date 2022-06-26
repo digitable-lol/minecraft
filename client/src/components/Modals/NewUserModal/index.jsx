@@ -2,7 +2,7 @@ import axios from 'axios'
 import React from 'react'
 import { useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
-import { URL } from '../../App'
+import { URL } from '../../../App'
 import './index.scss'
 
 const NewUserModal = ({ setShowNewUserModal }) => {

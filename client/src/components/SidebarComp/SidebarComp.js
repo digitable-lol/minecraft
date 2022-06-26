@@ -6,7 +6,7 @@ import { ButtonComp } from "../ButtonComp/ButtonComp";
 import axios from "axios";
 import InputRange from "react-input-range";
 import 'react-input-range/lib/css/index.css';
-import NewUserModal from "../NewUserModal";
+import NewUserModal from "../Modals/NewUserModal";
 import { URL } from "../../App";
 
 
@@ -25,6 +25,7 @@ export default function NavbarComp({
     const [minmax, setMinmax] = useState({min: 0, max: 1000000})
 
     const [newShowUserModal, setShowNewUserModal] = useState(false)
+
 
     const getCardsWithFilters = () => {
         setFilter({...filter, isFiltered: true})
