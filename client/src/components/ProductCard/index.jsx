@@ -5,6 +5,7 @@ import { Button, Form } from 'react-bootstrap'
 import { URL } from '../../App'
 import "./index.scss"
 import 'moment/locale/ru' 
+import DatePicker from 'react-datepicker'
 
 moment.locale('ru')
 
@@ -75,7 +76,6 @@ const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting, user
         formData.append("photoBillsrc", fileCheckInput.current.files[0])
         setPhotoBillState(formData.get("photoBillsrc"))
     }
-
     return (
         <div className='card'>
             {isDeleting && <div className="card_delete">
@@ -107,7 +107,7 @@ const ProductCard = ({ data, getCards, isPost = false, setShow, isDeleting, user
                             })
                         }
                     </Form.Select> : `${user.firstname} ${user.lastname}`}</p>
-                    <p>Дата: {canEdit ? <input type="text" value={dateState} onChange={(e) => setDateState(e.target.value)}/> : moment().subtract(dateState, 'days').calendar()}</p>
+                    <p>Дата: {canEdit ? <DatePicker value={dateState} onChange={(e)=> setDateState(moment(e).format('LL'))}/> : moment().subtract(dateState, 'days').calendar()}</p>
                     <p>Стоимость: {canEdit ? <input type="text" value={priceState} onChange={(e) => setPriceState(e.target.value)}/> : priceState}</p>
                     <p>Количество: {canEdit ? <input type="text" value={quantityState} onChange={(e) => setQuantityState(e.target.value)}/> : quantityState}</p>
                     <p>Комментарий: {canEdit ? <input type="text" value={commentState} onChange={(e) => setCommentState(e.target.value)}/> : commentState}</p>

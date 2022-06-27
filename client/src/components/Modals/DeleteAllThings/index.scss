@@ -1,0 +1,15 @@
+
+.modal-content {
+    background-color: transparent;
+    max-width: 38vw;
+    margin: auto;
+    border: none;
+}
+
+.modal-body{
+    &.newUserModal{
+        padding: 50px;
+        border-radius: 15px;
+        background-color: white;
+    }
+}

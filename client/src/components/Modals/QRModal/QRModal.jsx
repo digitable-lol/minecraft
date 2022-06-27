@@ -5,26 +5,31 @@ import { Image } from 'react-bootstrap'
 import { URL } from '../../../App'
 import './index.scss'
 
-const NewUserModal = ({ setQRShow, id }) => {
+const QRModal = ({ id, deleteQRAndCloseModal }) => {
 
-    const [QRUrl, setQRUrl] = useState('')
 
-    // useEffect( async () => {
-    //   const res = axios.get(`${URL}/things/getQr/${id}`)
-    //   console.log(res)
-    //   setQRUrl(res)
-    // }, [])
-    
+    const [QRUrl, setQRUrl] = useState()
+
+    useEffect(() => {
+     axios.get(`${URL}/api/things/getQr/${id}`).then((res) =>{
+        if(res){
+            setQRUrl(res.data)
+        }
+      })
+    }, [])
+
+    console.log('rerender2')
+
 
     return (
-        <div className='modal' onClick={()=>setQRShow(false)}>
+        <div className='modal' onClick={deleteQRAndCloseModal}>
             <div className='modal-content' onClick={(e) => e.stopPropagation()}>
                 <div className='modal-body'>
-                    <Image src={QRUrl} />
+                    {QRUrl && <Image width={400} src={`${URL}/${QRUrl}`} />}
                 </div>
             </div>
         </div>
     )
 }
 
-export default NewUserModal
+export default React.memo(QRModal)

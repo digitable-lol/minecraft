@@ -19,6 +19,7 @@
         align-items: center;
         display: flex;
         justify-content: space-between;
+        flex-direction: column;
 
         &_right {
             min-width: 39%;

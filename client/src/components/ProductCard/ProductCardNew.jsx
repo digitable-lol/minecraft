@@ -8,14 +8,15 @@ import { Button, Carousel, Form } from 'react-bootstrap';
 import { URL } from '../../App.js';
 import moment from 'moment';
 import QRModal from '../Modals/QRModal/QRModal'
+import DatePicker from 'react-datepicker'
+
 
 moment.locale('ru')
 
 
-export default function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, usersList }) {
+function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, usersList }) {
 
   const { id, name, userid, user, date, price, discription, photosrc, quantity, photoBillsrc } = data
-  const [showButtons, setShowButtons] = useState(false)
   const [canEdit, setCanEdit] = useState(isPost)
   const [nameState, setNameState] = useState(name)
   const [useridState, setUseridState] = useState(userid ?? 1)
@@ -30,27 +31,26 @@ export default function ProductCardNew({ data, getCards, isPost = false, setShow
   const [QRShow, setQRShow] = useState(false)
 
   
-  const formData = new FormData()
 
   const fileInput = useRef()
   const fileCheckInput = useRef()
 
 
   const updateProduct = (idProduct) => {
+    const formData = new FormData()
 
     formData.append("name", nameState)
     formData.append("date", dateState)
     formData.append("price", priceState)
-    formData.append("disc", commentState)
+    formData.append("discription", commentState ?? '')
+    console.log(commentState);
     formData.append("photo", fileState)
     formData.append("photoBill", photoBillState)
     formData.append("userid", useridState)
     formData.append("quantity", quantityState)
-    formData.append("userid", useridState)
-    formData.append("photosrc", photosrc)
 
-    axios.put(`${URL}/api/things/${idProduct}`,
-      data,
+    axios.put(`${URL}/api/things/update/${idProduct}`,
+      formData,
       {
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -61,6 +61,8 @@ export default function ProductCardNew({ data, getCards, isPost = false, setShow
   }
 
   const postProduct = () => {
+    const formData = new FormData()
+
     formData.append("name", nameState)
     formData.append("date", dateState)
     formData.append("price", priceState)
@@ -81,13 +83,13 @@ export default function ProductCardNew({ data, getCards, isPost = false, setShow
 
 
   const fileChange = () => {
-    formData.append("photo", fileInput.current.files[0])
-    setFileState(formData.get("photo"))
+    // formData.append("photo", fileInput.current.files[0])
+    setFileState(fileInput.current.files[0])
   }
 
   const fileCheckChange = () => {
-    formData.append("photoBillsrc", fileCheckInput.current.files[0])
-    setPhotoBillState(formData.get("photoBillsrc"))
+    setPhotoBillState(fileCheckInput.current.files[0])
+
   }
 
   const cardRef = useRef()
@@ -103,7 +105,14 @@ export default function ProductCardNew({ data, getCards, isPost = false, setShow
     height: '100%'
   }
 
+  const deleteQRAndCloseModal = () => {
+    axios.delete(`${URL}/api/things/DeleteQR`)
+      .then(() => setQRShow(false))
+  }
 
+  const showQRModal = () => {
+    setQRShow(true)
+  }
 
   return (
     <>
@@ -124,9 +133,9 @@ export default function ProductCardNew({ data, getCards, isPost = false, setShow
                 <Carousel.Item>
                   <img style={{ maxHeight: "300px", objectFit: "contain" }} src={`${URL}/${photosrc}`} alt={name} />
                 </Carousel.Item>
-                <Carousel.Item>
-                  <img style={{ maxHeight: "300px", objectFit: "contain" }} src={`${URL}/${photoBillsrc}`} alt={name} />
-                </Carousel.Item>
+                { photoBillsrc && <Carousel.Item>
+                  <img style={{ maxHeight: "300px", objectFit: "contain" }} src={`${URL}/${photoBillsrc}`} alt={name} /> 
+                </Carousel.Item> }
               </Carousel>}
 
             </div>
@@ -135,12 +144,12 @@ export default function ProductCardNew({ data, getCards, isPost = false, setShow
                   <Button onClick={() => deleteProduct(id)}>Удалить</Button>
               </div>}
               <h1>
-                {name}
+                {canEdit ? <input className="card_info_title" type="text" placeholder='Название' value={nameState} onChange={(e) => setNameState(e.target.value)}/> : nameState}
               </h1>
               <h3>Владелец: {canEdit ?
                 <Form.Select
                   onChange={e => { setUseridState(e.target.value) }}
-                  style={{ marginTop: "25px" }}
+                  style={{ marginTop: "10px" }}
                 >
                   {
                     usersList.map((item) => {
@@ -152,12 +161,9 @@ export default function ProductCardNew({ data, getCards, isPost = false, setShow
               <h4>Дата:&nbsp;
                 {
                 canEdit ? 
-                  <input type="text"
-                    value={dateState}
-                    onChange={(e) => setDateState(e.target.value)}
-                    /> 
-                : 
-                  moment().subtract(dateState, 'days').calendar()
+                <DatePicker value={dateState} onChange={(e)=> setDateState(moment(e).format('LL'))}/>
+                  : 
+                  moment().format('Do MMMM YYYY')
                 }
               </h4>
 
@@ -172,8 +178,8 @@ export default function ProductCardNew({ data, getCards, isPost = false, setShow
               </h5>
 
               <div style={{ display: "flex", flexWrap: "nowrap" }}>
-                <span style={descriptionShow ? descriptionStyle : null} className='di_card-info__right-description' title={discription}>Описание
-                  {canEdit ? <input type="text" value={commentState} onChange={(e) => setCommentState(e.target.value)}/> : commentState}
+                <span style={descriptionShow ? descriptionStyle : null} className='di_card-info__right-description' title={discription}>
+                  {canEdit ? <textarea type="text" value={commentState} onChange={(e) => setCommentState(e.target.value)}/> : commentState}
                   {!canEdit && commentState && descriptionShow && <button className='di_card-info__right-toggleDescription' onClick={toggleDescriptionShow}>...</button>}
                 </span>
                 {!canEdit && commentState && !descriptionShow && <button className='di_card-info__right-toggleDescription' onClick={toggleDescriptionShow}>...</button>}
@@ -196,12 +202,16 @@ export default function ProductCardNew({ data, getCards, isPost = false, setShow
               </div>
             </div>
             <div className='di_card-footer__right'>
-              <Button type='btn-primary di-qr-code' onClick={() => setQRShow(true)}><ImQrcode size={"30px"} top={"10px"}/></Button>
+              <Button type='btn-primary di-qr-code' onClick={showQRModal}>
+                <ImQrcode size={"30px"} top={"10px"}/>
+              </Button>
             </div>
           </div>
         </div>
       </div>
-      {QRShow && <QRModal setQRShow={setQRShow} id={id}/>}
+      {QRShow && <QRModal deleteQRAndCloseModal={deleteQRAndCloseModal} id={id}/>}
     </>
   )
 }
+
+export default ProductCardNew
