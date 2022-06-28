@@ -15,32 +15,12 @@ namespace Minecraft_5._0.Data.Services
             priceHigh = priceHigh == null ? context.Things.Max(t => t.price) : priceHigh;
             minDate = minDate == null ? context.Things.Min(t => t.date) : minDate;
             maxDate = maxDate == null ? context.Things.Max(t => t.date) : maxDate;
-            if (!String.IsNullOrEmpty(searchstr))
-            {
-                things = things.Where(t => t.name.ToUpper().Contains(searchstr.ToUpper()));
-            }
-
-            if (photoBill)
-            {
-                things = things.Where(t => t.photoBillsrc != null);
-            }
-            if (userid != null)
-            {
-                things = things.Where(t => t.userid == userid);
-            }
-            if (quantity != 0)
-            {
-                things = things.Where(t => t.quantity == quantity);
-            }
-            if (priceLow != null || priceHigh != null)
-            {
-                things = things.Where(t => (t.price <= priceHigh) && (t.price >= priceLow));
-            }
-
-            if (minDate != null || maxDate != null)
-            {
-                things = things.Where(t => (t.date >= minDate) && (t.date <= maxDate));
-            }
+            if (!String.IsNullOrEmpty(searchstr)){ things = things.Where(t => t.name.ToUpper().Contains(searchstr.ToUpper())); }
+            if (photoBill){ things = things.Where(t => t.photoBillsrc != null); }
+            if (userid != null) { things = things.Where(t => t.userid == userid); }
+            if (quantity != 0) {things = things.Where(t => t.quantity == quantity); }
+            if (priceLow != null || priceHigh != null) { things = things.Where(t => (t.price <= priceHigh) && (t.price >= priceLow)); }
+            if (minDate != null || maxDate != null) { things = things.Where(t => (t.date >= minDate) && (t.date <= maxDate)); }
             return things;
         }
     }

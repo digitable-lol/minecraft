@@ -69,34 +69,9 @@ namespace Minecraft_5._0.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Putthing(int id, thing thing)
         {
-            var thing1 = _context.Things.Where(thing => thing.id == id).FirstOrDefault();
-            if (thing1 == null)
-            {
-                return BadRequest();
-            }
-            if (thing.photo != null)
-            {
-                string pathp = "wwwroot/" + thing1.photosrc;
-                pathp = Path.Combine(Directory.GetCurrentDirectory(), pathp);
-                System.IO.File.Delete(pathp);
-                thing1.photo = thing.photo;
-                thing1.photosrc = thing.getSrcphoto();
-            }
-            if (thing.photoBill != null)
-            {
-                string pathb = "wwwroot/" + thing1.photoBillsrc;
-                pathb = Path.Combine(Directory.GetCurrentDirectory(), pathb);
-                System.IO.File.Delete(pathb);
-                thing1.photoBill = thing.photoBill;
-                thing1.photoBillsrc = thing.getSrcphotoBill();
-            }
-            if (thing.name!= null) { thing1.name = thing.name; }
-            if (thing.price!= null) { thing1.price = thing.price; }
-            if (thing.date != null) { thing1.date = thing.date; }
-            if (thing.quantity != null) { thing1.quantity = thing.quantity;}
-            thing1.userid = thing.userid;
-            if (thing.discription != null) { thing1.discription = thing.discription; }
-            _context.Entry(thing1).State = EntityState.Modified;
+            thing = UpdateService.Update(_context, id, thing);
+            if (thing == null) { return BadRequest(); }
+            _context.Entry(thing).State = EntityState.Modified;
 
             try
             {
