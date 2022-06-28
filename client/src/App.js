@@ -41,8 +41,6 @@ function App() {
   const handleShowFilter = () => setShowFilter(true);
 
   function getCards() {
-
-    
     if(filter.isFiltered){
       axios.get(`${URL}/api/things?PageNumber=${pageNum}&PageSize=6&searchstr=${searchString ?? ""}&quantity=${filter.quantity}&priceLow=${filter.priceLow}&priceHigh=${filter.priceHigh}&photoBill=${filter.photoBill}&minDate=${filter.minDate}&maxDate=${filter.maxDate}&userid=${filter.userId}`)
       .then(res => {
@@ -92,7 +90,7 @@ function App() {
 
   return (
     <div className="App">
-      <SidebarComp usersList={usersList} handleShowFilter={handleShowFilter} setShow={setShow} isDeleting={isDeleting} setIsDeleting={setIsDeleting} filter={filter} setFilter={setFilter} getCards={getCards} handleCloseFilter={handleCloseFilter} showFilter={showFilter} setShowFilter={setShowFilter}/>
+      <SidebarComp getCards={getCards} usersList={usersList} handleShowFilter={handleShowFilter} setShow={setShow} isDeleting={isDeleting} setIsDeleting={setIsDeleting} filter={filter} setFilter={setFilter} getCards={getCards} handleCloseFilter={handleCloseFilter} showFilter={showFilter} setShowFilter={setShowFilter}/>
       <NavbarComp handleShowFilter={handleShowFilter} getCards={getCards} setSearchString={setSearchString} searchString={searchString} />
       {show && <ModalComp setShow={setShow} getCards={getCards} usersList={usersList} />} 
       <GridComp usersList={usersList} totalPages={totalPages} setTotalPages={setTotalPages} isDeleting={isDeleting} getCards={getCards} cards={cards} pageNum={pageNum} setPageNum={setPageNum}/>

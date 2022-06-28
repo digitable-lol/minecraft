@@ -19,7 +19,8 @@ export default function NavbarComp({
     handleCloseFilter, 
     filter, 
     setFilter,
-    usersList
+    usersList,
+    getCards
 }) {
 
     const [minmax, setMinmax] = useState({min: 0, max: 1000000})
@@ -54,6 +55,20 @@ export default function NavbarComp({
         setDeleteAllModal(false)
     }
 
+    const clearFilter = () => {
+        setFilter({
+            quantity: '',
+            priceLow: 1,
+            priceHigh: 1000000,
+            photoBill: '',
+            minDate: '',
+            maxDate: '',
+            isFiltered: false,
+            userId: '',
+        })
+        getCards()
+    }
+
     let selectedUser = usersList.find(item => item.id === filter.userId)
 
 
@@ -72,7 +87,7 @@ export default function NavbarComp({
                     <Form.Select onChange={(e) => {setFilter({...filter, photoBill: e.target.value, isFiltered: false})}}>
                         <option value={''}>Не важно</option>
                         <option value={true}>Есть</option>
-                        <option value={false}>Нет</option>
+                        {/* <option value={false}>Нет</option> */}
                     </Form.Select>
                     
                     <div style={{margin: "25px 0"}}>
@@ -87,10 +102,10 @@ export default function NavbarComp({
                     </div>
                     
 
-                    <FormLabel>Min Date: {new Date(filter.minDate).toLocaleString}</FormLabel>
+                    <FormLabel>Дата от: {new Date(filter.minDate).toLocaleString}</FormLabel>
                     <DatePicker value={filter.minDate} onChange={(e)=> setFilter({...filter, minDate: e.toDateString(), isFiltered: false})}/>
                     
-                    <FormLabel>Max Date: {new Date(filter.maxDate).toLocaleString}</FormLabel> 
+                    <FormLabel>Дата до: {new Date(filter.maxDate).toLocaleString}</FormLabel> 
                     <DatePicker locale="ru" value={filter.maxDate} onChange={(e)=> setFilter({...filter, maxDate: e.toDateString(), isFiltered: false})}/>
                     <Form.Select onChange={e => {setFilter({...filter, userId: e.target.value, isFiltered: false})}} style={{marginTop: "25px"}}>
                         <option value={''}>Выберите пользователя</option> 
@@ -104,7 +119,8 @@ export default function NavbarComp({
                     <ButtonComp setShow={setShow} isDeleting={isDeleting} setIsDeleting={setIsDeleting} handleShowFilter={handleShowFilter} handleCloseFilter={handleCloseFilter}/>
                     <Button onClick={newUser} style={{margin: "0 auto 25px", width: "100%"}}>Добавить нового пользователя</Button>
                     <Button onClick={openModalDeleteAllThings} style={{margin: "0 auto 25px", width: "100%"}} variant="danger">Удалить всё</Button>
-                    <Button onClick={getCardsWithFilters} style={{width: "100%"}}>Применить</Button>
+                    <Button onClick={getCardsWithFilters} style={{width: "100%"}} variant="success">Применить</Button>
+                    <Button onClick={clearFilter} style={{margin: "25px auto 25px", width: "100%"}}>Сбросить фильтры</Button>
 
                 </Offcanvas.Body>
             </Offcanvas>

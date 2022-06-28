@@ -31,7 +31,7 @@ export const NavbarComp = ({setShow, isDeleting, setIsDeleting, getCards, search
                             value={searchString}
                             onChange={(e)=> setSearchString(e.target.value)}
                             type="search"
-                            placeholder="Search"
+                            placeholder="Поиск"
                             className="me-2"
                             aria-label="Search"
                         />

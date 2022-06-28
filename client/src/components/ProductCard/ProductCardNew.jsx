@@ -5,7 +5,7 @@ import { ImQrcode } from "react-icons/im";
 import './index-new.scss'
 import './dropdownbtn.css'
 import { Button, Carousel, Form } from 'react-bootstrap';
-import { URL } from '../../App.js';
+import { URL as LOCAL_URL } from '../../App.js';
 import moment from 'moment';
 import QRModal from '../Modals/QRModal/QRModal'
 import DatePicker from 'react-datepicker'
@@ -30,7 +30,7 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
 
   const [QRShow, setQRShow] = useState(false)
 
-  
+  var fileDownload = require('js-file-download');
 
   const fileInput = useRef()
   const fileCheckInput = useRef()
@@ -72,13 +72,13 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
     formData.append("quantity", quantityState)
     formData.append("userid", useridState)
 
-    axios.post(`${URL}/api/things/new`, formData)
+    axios.post(`${LOCAL_URL}/api/things/new`, formData)
       .then(() => (setShow(false), getCards()))
   }
 
 
   const deleteProduct = (idProduct) => {
-    axios.delete(`${URL}/api/things/${idProduct}`).then(() => getCards())
+    axios.delete(`${LOCAL_URL}/api/things/delete/${idProduct}`).then(() => getCards())
   }
 
 
@@ -106,13 +106,38 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
   }
 
   const deleteQRAndCloseModal = () => {
-    axios.delete(`${URL}/api/things/DeleteQR`)
+    axios.delete(`${LOCAL_URL}/api/things/DeleteQR`)
       .then(() => setQRShow(false))
   }
 
   const showQRModal = () => {
     setQRShow(true)
   }
+
+
+  const [QRUrl, setQRUrl] = useState()
+
+  const downloadQRRef = useRef()
+
+  const downloadQR = () => {
+    // axios.get(`${LOCAL_URL}/api/things/getQr/${id}`).then((res) => {
+    //   const blob = awa
+    // })
+
+    axios.get(`${LOCAL_URL}/api/things/getQr/${id}`, { responseType: 'arraybuffer' }).then((res)=> {
+      console.log(res)
+      fileDownload(res.data, `${new Date}.png`)
+      axios.delete(`${LOCAL_URL}/api/things/DeleteQR`)
+    })
+  }
+  // const downloadQR = () => {
+  //   axios.get(`${URL}/api/things/getQr/${id}`).then((res) =>{
+  //     if(res){
+  //         setQRUrl(res.data)
+  //         downloadQRRef.current.click()          
+  //     }
+  //   })
+  // }
 
   return (
     <>
@@ -131,10 +156,10 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
 
               {!canEdit && <Carousel interval={null}>
                 <Carousel.Item>
-                  <img style={{ maxHeight: "300px", objectFit: "contain" }} src={`${URL}/${photosrc}`} alt={name} />
+                  <img style={{ maxHeight: "300px", objectFit: "contain" }} src={`${LOCAL_URL}/${photosrc}`} alt={name} />
                 </Carousel.Item>
                 { photoBillsrc && <Carousel.Item>
-                  <img style={{ maxHeight: "300px", objectFit: "contain" }} src={`${URL}/${photoBillsrc}`} alt={name} /> 
+                  <img style={{ maxHeight: "300px", objectFit: "contain" }} src={`${LOCAL_URL}/${photoBillsrc}`} alt={name} /> 
                 </Carousel.Item> }
               </Carousel>}
 
@@ -146,7 +171,7 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
               <h1>
                 {canEdit ? <input className="card_info_title" type="text" placeholder='Название' value={nameState} onChange={(e) => setNameState(e.target.value)}/> : nameState}
               </h1>
-              <h3>Владелец: {canEdit ?
+              <h3>Владелец: {canEdit ? 
                 <Form.Select
                   onChange={e => { setUseridState(e.target.value) }}
                   style={{ marginTop: "10px" }}
@@ -163,7 +188,7 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
                 canEdit ? 
                 <DatePicker value={dateState} onChange={(e)=> setDateState(moment(e).format('LL'))}/>
                   : 
-                  moment().format('Do MMMM YYYY')
+                  moment(dateState).format('Do MMMM YYYY')
                 }
               </h4>
 
@@ -202,9 +227,10 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
               </div>
             </div>
             <div className='di_card-footer__right'>
-              <Button type='btn-primary di-qr-code' onClick={showQRModal}>
+              <Button type='btn-primary di-qr-code' onClick={downloadQR}>
                 <ImQrcode size={"30px"} top={"10px"}/>
               </Button>
+              {/* <a href={`${URL}/${QRUrl}`} download ref={downloadQRRef}>Скачать QR Code</a> */}
             </div>
           </div>
         </div>
