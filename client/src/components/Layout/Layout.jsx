@@ -1,5 +1,5 @@
 import React from 'react'
-import Footer from '../FooterComp/FooterComp'
+import Footer from '../Layout/FooterComp/FooterComp'
 import NavbarComp from "./Navbar"
 
 const Layout = (props) => {
