@@ -1,35 +1,11 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Container, Col } from 'react-bootstrap'
-import ProductCard from '../ProductCard'
 import PaginationComp from './Pagination'
 import './GridStyle.scss'
-import SidebarComp from '../SidebarComp/SidebarComp'
-import Footer from '../FooterComp/FooterComp'
 import ProductCardNew from '../ProductCard/ProductCardNew'
 
 
-// const cardListStyle = {
-//     display: "flex",
-//     //marginTop: "25px",
-//     padding-top: "100px",
-//     flexWrap: "wrap",
-//     justifyContent: "center",
-//     gap: "25px"
-// }
-
-export default function GridComp({isDeleting, getCards, cards, pageNum, setPageNum, totalPages, setTotalPages, usersList}) {
-    
-    // function getCards() {
-    //     axios.get(`https://localhost:5001/api/things?PageNumber=${pageNum}&PageSize=6`)
-    //         .then(res => {
-    //             const cards = res.data.data;
-    //             console.log(cards)
-    //             setCards(cards)
-    //             setTotalPages(res.data.totalPages)
-    //         })
-
-    // }
+export default function CardList({isDeleting, getCards, cards, pageNum, setPageNum, totalPages, setTotalPages, usersList}) {
 
     useEffect(() => {
         getCards({pageNum:pageNum, setTotalPages:setTotalPages})

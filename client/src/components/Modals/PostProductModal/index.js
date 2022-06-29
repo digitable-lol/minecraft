@@ -1,10 +1,10 @@
 import React from 'react'
-import ProductCard from '../ProductCard'
 import './index.scss'
+import PostProcuctCard from '../../ProductCard/PostProductCard'
 
-const ModalComp = ({setShow, getCards, usersList}) => {
+const PostProductModal = ({setShow, getCards, usersList}) => {
 
-    const data={ 
+    const data = { 
         name:'',
         owner:'',
         data:'',
@@ -16,10 +16,10 @@ const ModalComp = ({setShow, getCards, usersList}) => {
         <div className='modal' onClick={()=>setShow(false)}>
             <div className='modal-content' onClick={(e)=>e.stopPropagation()}>
                 <div className='modal-body'>
-                    <ProductCard data={data} usersList={usersList} isPost setShow={setShow} getCards={getCards}/>
+                    <PostProcuctCard data={data} usersList={usersList} setShow={setShow} getCards={getCards}/>
                 </div>
             </div>
         </div>
     )
 }
-export default ModalComp
+export default PostProductModal

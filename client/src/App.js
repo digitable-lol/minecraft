@@ -1,13 +1,11 @@
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { NavbarComp } from './components/NavbarComp/NavbarComp';
-import GridComp from './components/GridComp/GridComp';
+import CardList from './components/CardList';
 import { useEffect, useState } from 'react';
-import ModalComp from './components/ModalComp/ModalComp';
 import axios from 'axios';
-import SidebarComp from './components/SidebarComp/SidebarComp';
-// import { setCards } from './store/redusers/cardsReducer';
-import Footer from './components/FooterComp/FooterComp';
+import Sidebar from './components/Sidebar/';
+import PostProductModal from './components/Modals/PostProductModal';
+import Layout from './components/Layout/Layout';
+import { getUsers } from './services/user.service';
 
 export const URL = "https://localhost:5001"
 
@@ -30,10 +28,10 @@ function App() {
     maxDate: '',
     isFiltered: false,
     userId: '',
-})
+  })
 
   const [usersList, setUsersList] = useState([])
-  
+
 
   const [showFilter, setShowFilter] = useState(false);
 
@@ -41,61 +39,90 @@ function App() {
   const handleShowFilter = () => setShowFilter(true);
 
   function getCards() {
-    if(filter.isFiltered){
+    if (filter.isFiltered) {
       axios.get(`${URL}/api/things?PageNumber=${pageNum}&PageSize=6&searchstr=${searchString ?? ""}&quantity=${filter.quantity}&priceLow=${filter.priceLow}&priceHigh=${filter.priceHigh}&photoBill=${filter.photoBill}&minDate=${filter.minDate}&maxDate=${filter.maxDate}&userid=${filter.userId}`)
-      .then(res => {
+        .then(res => {
           const cards = res.data.data;
           setCards(cards)
           setTotalPages(res.data.totalPages)
-          window.scrollTo(0,0)
+          window.scrollTo(0, 0)
         })
     }
-    else if (searchString){
+    else if (searchString) {
       axios.get(`${URL}/api/things?PageNumber=${pageNum}&PageSize=6&searchstr=${searchString}`)
         .then(res => {
-            const cards = res.data.data;
-            setCards(cards)
-            setTotalPages(res.data.totalPages)
-            window.scrollTo(0,0)
-          })
+          const cards = res.data.data;
+          setCards(cards)
+          setTotalPages(res.data.totalPages)
+          window.scrollTo(0, 0)
+        })
     }
-    else{
+    else {
       axios.get(`${URL}/api/things?PageNumber=${pageNum}&PageSize=6`)
         .then(res => {
-            const cards = res.data.data;
-            setCards(cards)
-            setTotalPages(res.data.totalPages)
-            window.scrollTo(0,0)
+          const cards = res.data.data;
+          setCards(cards)
+          setTotalPages(res.data.totalPages)
+          window.scrollTo(0, 0)
         })
     }
   }
 
+  const getAndSetUserList = () => {
+    getUsers().then((res) => { setUsersList(res.data) })
+  }
+
   useEffect(() => {
-    if(filter.isFiltered){
+    if (filter.isFiltered) {
       getCards()
     }
   }, [filter.isFiltered])
 
 
   useEffect(() => {
-    if(filter.isFiltered || searchString){
+    if (filter.isFiltered || searchString) {
       setPageNum(1)
     }
   }, [searchString, filter.isFiltered])
 
   useEffect(() => {
-    axios.get(`${URL}/api/users`).then((res)=> {setUsersList(res.data)})
+    getAndSetUserList()
   }, [])
 
-
   return (
-    <div className="App">
-      <SidebarComp getCards={getCards} usersList={usersList} handleShowFilter={handleShowFilter} setShow={setShow} isDeleting={isDeleting} setIsDeleting={setIsDeleting} filter={filter} setFilter={setFilter} getCards={getCards} handleCloseFilter={handleCloseFilter} showFilter={showFilter} setShowFilter={setShowFilter}/>
-      <NavbarComp handleShowFilter={handleShowFilter} getCards={getCards} setSearchString={setSearchString} searchString={searchString} />
-      {show && <ModalComp setShow={setShow} getCards={getCards} usersList={usersList} />} 
-      <GridComp usersList={usersList} totalPages={totalPages} setTotalPages={setTotalPages} isDeleting={isDeleting} getCards={getCards} cards={cards} pageNum={pageNum} setPageNum={setPageNum}/>
-      <Footer/>
-    </div>
+    <>
+      <Layout
+        handleShowFilter={handleShowFilter}
+        getCards={getCards}
+        setSearchString={setSearchString}
+        searchString={searchString}
+      >
+        <Sidebar
+          usersList={usersList}
+          handleShowFilter={handleShowFilter}
+          setShow={setShow}
+          isDeleting={isDeleting}
+          setIsDeleting={setIsDeleting}
+          filter={filter} setFilter={setFilter}
+          getCards={getCards}
+          handleCloseFilter={handleCloseFilter}
+          showFilter={showFilter}
+          setShowFilter={setShowFilter}
+          getAndSetUserList={getAndSetUserList}
+        />
+        <CardList
+          usersList={usersList}
+          totalPages={totalPages}
+          setTotalPages={setTotalPages}
+          isDeleting={isDeleting}
+          getCards={getCards}
+          cards={cards}
+          pageNum={pageNum}
+          setPageNum={setPageNum}
+        />
+      </Layout>
+      {show && <PostProductModal setShow={setShow} getCards={getCards} usersList={usersList} />}
+    </>
   );
 }
 

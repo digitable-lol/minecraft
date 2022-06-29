@@ -1,27 +1,25 @@
-import axios from 'axios'
-import React from 'react'
 import { useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
-import { URL } from '../../../App'
+import { createUser } from '../../../services/user.service'
 import './index.scss'
 
-const NewUserModal = ({ setShowNewUserModal }) => {
+const NewUserModal = ({ setNewUserModal, getAndSetUserList }) => {
 
     const [firstName, setFirstName] = useState()
     const [lastName, setLastName] = useState()
 
     const newUser = () => {
-        console.log('firstName',firstName)
-        if(firstName || lastName){
-            axios.post(`${URL}/api/users/new?Firstname=${firstName}&Lastname=${lastName}`, {
-                Firstname: firstName,
-                Lastname: lastName 
-            }).then(() => setShowNewUserModal(false))
+        if(firstName && lastName){
+            createUser(firstName, lastName)
+            .then(() => {
+                getAndSetUserList()
+                setNewUserModal(false)
+            })
         }
     }
 
     return (
-        <div className='modal' onClick={()=>setShowNewUserModal(false)}>
+        <div className='modal' onClick={()=>setNewUserModal(false)}>
             <div className='modal-content' onClick={(e) => e.stopPropagation()}>
                 <div className='modal-body newUserModal'>
                     <Form.Label>Имя</Form.Label>

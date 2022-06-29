@@ -1,20 +1,15 @@
-import React, { Component, useState } from 'react'
 import { Container, Navbar, Nav, Button, Form, FormControl } from 'react-bootstrap'
-import { ButtonComp } from '../ButtonComp/ButtonComp'
-import SidebarComp from '../SidebarComp/SidebarComp'
-import '../NavbarComp/index.scss'
 
 
-export const NavbarComp = ({setShow, isDeleting, setIsDeleting, getCards, searchString, setSearchString, handleShowFilter}) => {
+const NavbarComp = ({ getCards, searchString, setSearchString, handleShowFilter }) => {
     
-
     const searchThings = (e)=>{
         e.preventDefault()
         getCards({searchString:searchString})
     }
 
     return (
-        <div className='fixed'>
+        <div className='fixed-nav'>
             <Navbar bg="dark" variant={"dark"} expand="lg" >
                 <Container>
                     <Navbar.Brand href="#home">Minecraft</Navbar.Brand>
@@ -36,9 +31,10 @@ export const NavbarComp = ({setShow, isDeleting, setIsDeleting, getCards, search
                             aria-label="Search"
                         />
                     </Form>
-
                 </Container>
             </Navbar>
         </div>
     )
 }
+
+export default NavbarComp

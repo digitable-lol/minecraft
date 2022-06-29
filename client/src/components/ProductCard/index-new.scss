@@ -50,6 +50,8 @@
         margin: 0;
         font-weight: 300;
         font-size: 30px;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       & h3 {

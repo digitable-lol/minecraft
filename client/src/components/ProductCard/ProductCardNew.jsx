@@ -1,23 +1,22 @@
 import axios from 'axios'
-import React, { useEffect, useRef, useState } from 'react'
-import { AiOutlineQrcode } from 'react-icons/fa';
+import React, { useRef, useState } from 'react'
 import { ImQrcode } from "react-icons/im";
 import './index-new.scss'
 import './dropdownbtn.css'
 import { Button, Carousel, Form } from 'react-bootstrap';
 import { URL as LOCAL_URL } from '../../App.js';
 import moment from 'moment';
-import QRModal from '../Modals/QRModal/QRModal'
 import DatePicker from 'react-datepicker'
+import { updateProduct } from '../../services/card.service';
 
 
 moment.locale('ru')
 
 
-function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, usersList }) {
+function ProductCardNew({ data, getCards, isDeleting, usersList }) {
 
   const { id, name, userid, user, date, price, discription, photosrc, quantity, photoBillsrc } = data
-  const [canEdit, setCanEdit] = useState(isPost)
+  const [canEdit, setCanEdit] = useState(false)
   const [nameState, setNameState] = useState(name)
   const [useridState, setUseridState] = useState(userid ?? 1)
   const [dateState, setDateState] = useState(date)
@@ -28,68 +27,36 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
   const [photoBillState, setPhotoBillState] = useState()
   const [descriptionShow, setDescriptionShow] = useState(false)
 
-  const [QRShow, setQRShow] = useState(false)
-
   var fileDownload = require('js-file-download');
 
   const fileInput = useRef()
   const fileCheckInput = useRef()
 
 
-  const updateProduct = (idProduct) => {
-    const formData = new FormData()
-
-    formData.append("name", nameState)
-    formData.append("date", dateState)
-    formData.append("price", priceState)
-    formData.append("discription", commentState ?? '')
-    console.log(commentState);
-    formData.append("photo", fileState)
-    formData.append("photoBill", photoBillState)
-    formData.append("userid", useridState)
-    formData.append("quantity", quantityState)
-
-    axios.put(`${URL}/api/things/update/${idProduct}`,
-      formData,
-      {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
-        }
-      }
-    ).then(() => setCanEdit(false))
+  const update = () => {
+    updateProduct( id, {
+      name: nameState,
+      date: dateState,
+      price: priceState,
+      discription: commentState ?? "",
+      photo: fileState,
+      photoBill: photoBillState,
+      userid, useridState,
+      quantity: quantityState
+    })
+    .then(() => setCanEdit(false))
   }
-
-  const postProduct = () => {
-    const formData = new FormData()
-
-    formData.append("name", nameState)
-    formData.append("date", dateState)
-    formData.append("price", priceState)
-    formData.append("disc", commentState)
-    formData.append("photo", fileState)
-    formData.append("photoBill", photoBillState)
-    formData.append("quantity", quantityState)
-    formData.append("userid", useridState)
-
-    axios.post(`${LOCAL_URL}/api/things/new`, formData)
-      .then(() => (setShow(false), getCards()))
-  }
-
 
   const deleteProduct = (idProduct) => {
     axios.delete(`${LOCAL_URL}/api/things/delete/${idProduct}`).then(() => getCards())
   }
 
-
   const fileChange = () => {
-    // formData.append("photo", fileInput.current.files[0])
     setFileState(fileInput.current.files[0])
   }
 
   const fileCheckChange = () => {
     setPhotoBillState(fileCheckInput.current.files[0])
-
   }
 
   const cardRef = useRef()
@@ -101,43 +68,18 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
     }
   }
 
-  const descriptionStyle = {
-    height: '100%'
-  }
-
-  const deleteQRAndCloseModal = () => {
-    axios.delete(`${LOCAL_URL}/api/things/DeleteQR`)
-      .then(() => setQRShow(false))
-  }
-
-  const showQRModal = () => {
-    setQRShow(true)
-  }
-
-
-  const [QRUrl, setQRUrl] = useState()
-
-  const downloadQRRef = useRef()
-
   const downloadQR = () => {
-    // axios.get(`${LOCAL_URL}/api/things/getQr/${id}`).then((res) => {
-    //   const blob = awa
-    // })
-
     axios.get(`${LOCAL_URL}/api/things/getQr/${id}`, { responseType: 'arraybuffer' }).then((res)=> {
       console.log(res)
       fileDownload(res.data, `${new Date}.png`)
       axios.delete(`${LOCAL_URL}/api/things/DeleteQR`)
     })
   }
-  // const downloadQR = () => {
-  //   axios.get(`${URL}/api/things/getQr/${id}`).then((res) =>{
-  //     if(res){
-  //         setQRUrl(res.data)
-  //         downloadQRRef.current.click()          
-  //     }
-  //   })
-  // }
+
+  const descriptionStyle = {
+    height: '100%'
+  }
+
 
   return (
     <>
@@ -168,8 +110,17 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
               {isDeleting && <div className="card_delete">
                   <Button onClick={() => deleteProduct(id)}>Удалить</Button>
               </div>}
-              <h1>
-                {canEdit ? <input className="card_info_title" type="text" placeholder='Название' value={nameState} onChange={(e) => setNameState(e.target.value)}/> : nameState}
+              <h1 title={nameState}>
+                {
+                  canEdit ? 
+                  <input 
+                    className="card_info_title"
+                    type="text" 
+                    placeholder='Название' 
+                    value={nameState} 
+                    onChange={(e) => setNameState(e.target.value)}
+                    /> : nameState
+                }
               </h1>
               <h3>Владелец: {canEdit ? 
                 <Form.Select
@@ -205,11 +156,15 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
               <div style={{ display: "flex", flexWrap: "nowrap" }}>
                 <span style={descriptionShow ? descriptionStyle : null} className='di_card-info__right-description' title={discription}>
                   {canEdit ? <textarea type="text" value={commentState} onChange={(e) => setCommentState(e.target.value)}/> : commentState}
-                  {!canEdit && commentState && descriptionShow && <button className='di_card-info__right-toggleDescription' onClick={toggleDescriptionShow}>...</button>}
+                  {!canEdit && commentState?.length > 26 && descriptionShow &&
+                   <button className='di_card-info__right-toggleDescription' onClick={toggleDescriptionShow}>...</button>
+                   }
                 </span>
-                {!canEdit && commentState && !descriptionShow && <button className='di_card-info__right-toggleDescription' onClick={toggleDescriptionShow}>...</button>}
+                {!canEdit && commentState?.length > 26 && !descriptionShow &&
+                 <button className='di_card-info__right-toggleDescription' onClick={toggleDescriptionShow}>...</button>
+                 }
               </div>
-              {canEdit && !isPost && <Button onClick={() => updateProduct(id)}>Сохранить</Button>}
+              {canEdit && <Button onClick={update}>Сохранить</Button>}
             </div>
           </div>
           <div className='di_card-footer'>
@@ -217,12 +172,9 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
               <div className='di-dropdown'>
                 <button className="di-dropbtn">. . .</button>
                 <div className="di-dropdown-content">
-                  {!isPost && <>
-                      <a style={{cursor: "pointer"}} onClick={() => setCanEdit(true)}>Изменить</a>
+                      { !canEdit && <a style={{cursor: "pointer"}} onClick={() => setCanEdit(true)}>Изменить</a> }
+                      {canEdit && <a style={{cursor: "pointer"}} onClick={() => setCanEdit(false)}>Отменить</a>}
                       <a style={{cursor: "pointer"}} onClick={() => deleteProduct(id)}>Удалить</a>
-                  </>
-                  }
-                  {isPost && <a style={{cursor: "pointer"}}  onClick={postProduct}>Добавить</a>}
                 </div>
               </div>
             </div>
@@ -230,12 +182,10 @@ function ProductCardNew({ data, getCards, isPost = false, setShow, isDeleting, u
               <Button type='btn-primary di-qr-code' onClick={downloadQR}>
                 <ImQrcode size={"30px"} top={"10px"}/>
               </Button>
-              {/* <a href={`${URL}/${QRUrl}`} download ref={downloadQRRef}>Скачать QR Code</a> */}
             </div>
           </div>
         </div>
       </div>
-      {QRShow && <QRModal deleteQRAndCloseModal={deleteQRAndCloseModal} id={id}/>}
     </>
   )
 }

@@ -7,5 +7,9 @@
 }
 
 .modal-body{
-    
+    &.newUserModal{
+        padding: 50px;
+        border-radius: 15px;
+        background-color: white;
+    }
 }

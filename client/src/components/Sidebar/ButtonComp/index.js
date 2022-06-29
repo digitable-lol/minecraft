@@ -1,6 +1,5 @@
-import React, { Component, useState } from 'react'
+import React from 'react'
 import { Button } from 'react-bootstrap'
-import ModalComp from '../ModalComp/ModalComp'
 
 
 export const ButtonComp = (props) => {
