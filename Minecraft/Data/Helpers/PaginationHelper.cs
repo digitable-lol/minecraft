@@ -9,7 +9,7 @@ namespace Minecraft.Data.Helpers
 {
     public class PaginationHelper
     {
-        public static PagedResponse<IEnumerable<thing>> CreatePagedReponse<thing>(List<thing> pagedData,PaginationFilter filter, int totalRecords, IUriServiсe uriService, string route)
+        public static PagedResponse<IEnumerable<thing>> CreatePagedReponse<thing>(List<thing> pagedData,PaginationFilter filter, int totalRecords, IUriService uriService, string route)
         {
             var respose = new PagedResponse<IEnumerable<thing>>(pagedData, filter.PageNumber, filter.PageSize);
             var totalPages = ((double)totalRecords / (double)filter.PageSize);

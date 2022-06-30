@@ -30,8 +30,8 @@ namespace Minecraft.Controllers
     public class ThingApiController : ControllerBase
     {
         private readonly AppDBContent _context;
-        private IUriServiсe uriService;
-        public ThingApiController(AppDBContent context, IUriServiсe uriService)
+        private IUriService uriService;
+        public ThingApiController(AppDBContent context, IUriService uriService)
         {
             _context = context;
             this.uriService = uriService;
@@ -61,7 +61,7 @@ namespace Minecraft.Controllers
         {
             QrService.fileNameWithPath = QrService.GetQr(id, _context);
             string file_type = "application/jpg";
-            return File(QrService.fileNameWithPath, file_type, QrService.fileName);
+            return File(QrService.fileNameWithPath, file_type, QrService.Getfilename());
         }
 
         // PUT: api/things/5

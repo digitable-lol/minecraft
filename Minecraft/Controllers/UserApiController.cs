@@ -48,7 +48,6 @@ namespace Minecraft.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Putuser(int id, user user)
         {
-            user = await _context.Users.Include(u => u.things).FirstOrDefaultAsync();
             if (id != user.id)
             {
                 return BadRequest();

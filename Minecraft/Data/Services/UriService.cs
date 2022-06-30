@@ -5,7 +5,7 @@ using System;
 
 namespace Minecraft.Data.Services
 {
-    public class UriService: IUriServiсe
+    public class UriService: IUriService
     {
         private readonly string _baseUri;
         public UriService(string baseUri)

@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Minecraft_5._0</RootNamespace>
+    <RootNamespace>Minecraft</RootNamespace>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<NoWarn>$(NoWarn);1591</NoWarn>
 	<UserSecretsId>e91ae212-28cb-4711-b79c-da7c6421258c</UserSecretsId>
 	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>

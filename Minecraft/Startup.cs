@@ -79,7 +79,7 @@ namespace Minecraft
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
 
-            services.AddSingleton<IUriServiñe>(p =>
+            services.AddSingleton <IUriService>(p =>
             {
                 var accessor = p.GetRequiredService<IHttpContextAccessor>();
                 var request = accessor.HttpContext.Request;

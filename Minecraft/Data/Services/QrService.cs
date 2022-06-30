@@ -12,6 +12,11 @@ namespace Minecraft.Data.Services
     {
         public static string fileNameWithPath { get; set; }
         public static string fileName { get; set; }
+        public static string Getfilename()
+        {
+            fileName = Convert.ToString(Guid.NewGuid()) + ".jpg";
+            return fileName;
+        }
         public static string GetQr(int id, AppDBContent context)
         {
             var thing = context.Things.Include(t => t.user).Where(t => t.id == id).FirstOrDefault();
@@ -23,7 +28,7 @@ namespace Minecraft.Data.Services
             }
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
-            fileName = thing.name + ".jpg";
+            fileName = Getfilename();
 
             string fileNameWithPath = Path.Combine(path, fileName);
             if (thing == null)
