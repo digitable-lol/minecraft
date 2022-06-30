@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  minecraft:
+    image: ${DOCKER_REGISTRY-}minecraft
+    build:
+      context: .
+      dockerfile: Minecraft/Dockerfile

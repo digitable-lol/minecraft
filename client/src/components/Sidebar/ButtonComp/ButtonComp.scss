@@ -1,0 +1,14 @@
+.buttonComp {
+    margin: 25px 0;
+    display: flex;
+    justify-content: center;
+
+    &_item {
+        width: 40%;
+
+        &-first {
+            width: 40%;
+            margin-right: 10px;
+        }
+    }
+}

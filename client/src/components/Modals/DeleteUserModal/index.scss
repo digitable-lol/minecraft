@@ -1,0 +1,21 @@
+
+.modal-content {
+    background-color: transparent;
+    max-width: 38vw;
+    margin: auto;
+    border: none;
+}
+
+.modal-body{
+    &.newUserModal{
+        padding: 50px;
+        border-radius: 15px;
+        background-color: white;
+    }
+    .delete_button{
+        margin-right: 15px;
+    }
+    .form_select{
+        margin: 25px 0;
+    }
+}
