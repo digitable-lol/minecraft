@@ -23,9 +23,12 @@ namespace Minecraft.Data.Services
             }
             if (thing.photoBill != null)
             {
-                string pathb = "wwwroot/" + thing1.photoBillsrc;
-                pathb = Path.Combine(Directory.GetCurrentDirectory(), pathb);
-                System.IO.File.Delete(pathb);
+                if (thing1.photoBillsrc != null)
+                {
+                    string pathb = "wwwroot/" + thing1.photoBillsrc;
+                    pathb = Path.Combine(Directory.GetCurrentDirectory(), pathb);
+                    System.IO.File.Delete(pathb);
+                }
                 thing1.photoBill = thing.photoBill;
                 thing1.photoBillsrc = thing.getSrcphotoBill();
             }
