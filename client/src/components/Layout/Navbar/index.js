@@ -10,7 +10,7 @@ const NavbarComp = ({ getCards, searchString, setSearchString, handleShowFilter 
 
     return (
         <div className='fixed-nav'>
-            <Navbar bg="dark" variant={"dark"} expand="lg" >
+            <Navbar bg="dark" variant="dark" expand="lg">
                 <Container>
                     <Navbar.Brand href="#home">Minecraft</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />

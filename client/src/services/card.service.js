@@ -1,5 +1,20 @@
 import axios from "axios";
-import { URL } from "../App"
+import { API } from "../module/urlConsts";
+
+export const getProductsWithFilters = async (pageNum, searchString, filter) => {
+    const res = await axios.get(`${API.Product.Get}?PageNumber=${pageNum}&PageSize=6&searchstr=${searchString ?? ""}&quantity=${filter.quantity}&priceLow=${filter.priceLow}&priceHigh=${filter.priceHigh}&photoBill=${filter.photoBill}&minDate=${filter.minDate}&maxDate=${filter.maxDate}&userid=${filter.userId}`)
+    return res.data
+}
+
+export const getProductsFromSearch = async (pageNum, searchString) => {
+    const res = await axios.get(`${API.Product.Get}?PageNumber=${pageNum}&PageSize=6&searchstr=${searchString}`)
+    return res.data
+}
+
+export const getAllProducts = async (pageNum) => {
+    const res = await axios.get(`${API.Product.Get}?PageNumber=${pageNum}&PageSize=6`)
+    return res.data
+}
 
 export const updateProduct = async (idProduct, data) => {
     const formData = new FormData()
@@ -10,7 +25,7 @@ export const updateProduct = async (idProduct, data) => {
         formData.append(`${key}`, data[key])
     });
 
-    await axios.put(`${URL}/api/things/update/${idProduct}`,
+    await axios.put(`${API.Product.Update}${idProduct}`,
         formData,
         {
             headers: {
@@ -30,5 +45,15 @@ export const postProduct = async (data) => {
         formData.append(`${key}`, data[key])
     });
 
-    await axios.post(`${URL}/api/things/new`, formData)
+    await axios.post(API.Product.Post, formData)
+}
+
+export const deleteProduct = async (idProduct) => {
+    const res = await axios.delete(`${API.Product.DeleteOne}${idProduct}`)
+    return res
+}
+
+export const deleteAllProduct = async () => {
+    const res = await axios.delete(API.Product.DeleteAll)
+    return res
 }

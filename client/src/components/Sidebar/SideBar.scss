@@ -1,0 +1,16 @@
+.sidebar{
+    &_buttons{
+        display: flex;
+        flex-direction: column;
+    }
+    &_range{
+        margin: 25px 0;
+    }
+    &_button{
+        margin: 0 auto 25px;
+        width: 100%;
+    }
+    &_form-select{
+        margin-top: 25px;
+    }
+}

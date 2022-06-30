@@ -1,11 +1,11 @@
 import React from 'react'
 import { Pagination } from 'react-bootstrap'
+import './Pagination.scss'
 
 
 export default function PaginationComp({ setPageNum, pageNum, totalPages }) {
     return (
-        <Pagination style={{justifyContent:"center", marginTop:"50px", paddingBottom: "200px"}}>
-
+        <Pagination className='pagination'>
             <Pagination.First onClick={() => setPageNum(1)} />
             <Pagination.Prev disabled={pageNum - 1 <= 1} onClick={() => setPageNum(pageNum - 1)} />
             {pageNum - 2 >= 1 && <><Pagination.Item onClick={() => setPageNum(1)}>{1}</Pagination.Item>

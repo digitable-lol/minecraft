@@ -19,7 +19,7 @@ const DeleteUserModal = ({ setDeleteUserModal, usersList, getAndSetUserList }) =
             <div className='modal-content' onClick={(e) => e.stopPropagation()}>
                 <div className='modal-body newUserModal'>
                     <h2>Выберите пользователя:</h2>
-                    <Form.Select onChange={e => setSelectedUser(e.target.value)} style={{margin: "25px 0"}}>
+                    <Form.Select onChange={e => setSelectedUser(e.target.value)} className='form_select'>
                         <option value={''}>Выберите пользователя</option> 
                         {
                             usersList.map((item) => {
@@ -27,7 +27,7 @@ const DeleteUserModal = ({ setDeleteUserModal, usersList, getAndSetUserList }) =
                             })
                         }
                     </Form.Select>
-                    <Button variant='danger' onClick={deleteSelectedUser} style={{marginRight: "15px"}}>Удалить</Button>
+                    <Button variant='danger' onClick={deleteSelectedUser} className="delete_button">Удалить</Button>
                     <Button onClick={()=>setDeleteUserModal(false)}>Отмена</Button>
                 </div>
             </div>

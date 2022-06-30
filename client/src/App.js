@@ -1,19 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CardList from './components/CardList';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import Sidebar from './components/Sidebar/';
 import PostProductModal from './components/Modals/PostProductModal';
 import Layout from './components/Layout/Layout';
 import { getUsers } from './services/user.service';
+import { getAllProducts, getProductsFromSearch, getProductsWithFilters } from './services/card.service';
 
-export const URL = "https://localhost:5001"
 
 function App() {
 
   const [show, setShow] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [cards, setCards] = useState([])
+  const [cardsList, setCardsList] = useState([])
   const [searchString, setSearchString] = useState()
   const [pageNum, setPageNum] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -38,38 +37,38 @@ function App() {
   const handleCloseFilter = () => setShowFilter(false);
   const handleShowFilter = () => setShowFilter(true);
 
+  const setCardListData = (cards, totalPagesParam) => {
+    setCardsList(cards)
+    setTotalPages(totalPagesParam)
+  }
+
   function getCards() {
     if (filter.isFiltered) {
-      axios.get(`${URL}/api/things?PageNumber=${pageNum}&PageSize=6&searchstr=${searchString ?? ""}&quantity=${filter.quantity}&priceLow=${filter.priceLow}&priceHigh=${filter.priceHigh}&photoBill=${filter.photoBill}&minDate=${filter.minDate}&maxDate=${filter.maxDate}&userid=${filter.userId}`)
+      getProductsWithFilters(pageNum, searchString, filter)
         .then(res => {
-          const cards = res.data.data;
-          setCards(cards)
-          setTotalPages(res.data.totalPages)
+          setCardListData(res.data, res.totalPages)
           window.scrollTo(0, 0)
         })
     }
     else if (searchString) {
-      axios.get(`${URL}/api/things?PageNumber=${pageNum}&PageSize=6&searchstr=${searchString}`)
+      getProductsFromSearch(pageNum, searchString)
         .then(res => {
-          const cards = res.data.data;
-          setCards(cards)
-          setTotalPages(res.data.totalPages)
+          setCardListData(res.data, res.totalPages)
           window.scrollTo(0, 0)
         })
     }
     else {
-      axios.get(`${URL}/api/things?PageNumber=${pageNum}&PageSize=6`)
+      getAllProducts(pageNum)
         .then(res => {
-          const cards = res.data.data;
-          setCards(cards)
-          setTotalPages(res.data.totalPages)
-          window.scrollTo(0, 0)
-        })
+          setCardListData(res.data, res.totalPages)
+            window.scrollTo(0, 0)
+          })
     }
   }
 
   const getAndSetUserList = () => {
-    getUsers().then((res) => { setUsersList(res.data) })
+    getUsers()
+    .then((res) => { setUsersList(res.data) })
   }
 
   useEffect(() => {
@@ -116,7 +115,7 @@ function App() {
           setTotalPages={setTotalPages}
           isDeleting={isDeleting}
           getCards={getCards}
-          cards={cards}
+          cards={cardsList}
           pageNum={pageNum}
           setPageNum={setPageNum}
         />

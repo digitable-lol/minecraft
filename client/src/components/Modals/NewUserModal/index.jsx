@@ -11,10 +11,10 @@ const NewUserModal = ({ setNewUserModal, getAndSetUserList }) => {
     const newUser = () => {
         if(firstName && lastName){
             createUser(firstName, lastName)
-            .then(() => {
-                getAndSetUserList()
-                setNewUserModal(false)
-            })
+                .then(() => {
+                    getAndSetUserList()
+                    setNewUserModal(false)
+                })
         }
     }
 
@@ -26,7 +26,7 @@ const NewUserModal = ({ setNewUserModal, getAndSetUserList }) => {
                     <Form.Control value={firstName} onChange={(e) => {setFirstName(e.target.value)}}/>
                     <Form.Label>Фамилия</Form.Label>
                     <Form.Control value={lastName} onChange={(e) => {setLastName(e.target.value)}}/>
-                    <Button onClick={newUser} style={{marginTop: "10px"}}>Добавить</Button>
+                    <Button onClick={newUser} className="button_add">Добавить</Button>
                 </div>
             </div>
         </div>

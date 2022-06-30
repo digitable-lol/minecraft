@@ -4,20 +4,19 @@ import { Button, Form } from 'react-bootstrap'
 import "./index.scss"
 import 'moment/locale/ru'
 import DatePicker from 'react-datepicker'
-import { postProduct } from '../../services/card.service'
+import { postProduct } from '../../../../services/card.service'
 
 moment.locale('ru')
 
 
-const PostProcuctCard = ({ data, getCards, setShow, usersList }) => {
+const PostProcuctCard = ({ getCards, setShow, usersList }) => {
 
-    const { name, userid, date, price, comment, quantity } = data
-    const [nameState, setNameState] = useState(name)
-    const [useridState, setUseridState] = useState(userid ?? 1)
-    const [dateState, setDateState] = useState(date)
-    const [priceState, setPriceState] = useState(price)
-    const [commentState, setCommentState] = useState(comment)
-    const [quantityState, setQuantityState] = useState(quantity)
+    const [nameState, setNameState] = useState('')
+    const [useridState, setUseridState] = useState(1)
+    const [dateState, setDateState] = useState('')
+    const [priceState, setPriceState] = useState('')
+    const [commentState, setCommentState] = useState('')
+    const [quantityState, setQuantityState] = useState('')
     const [fileState, setFileState] = useState()
     const [photoBillState, setPhotoBillState] = useState()
 
@@ -73,7 +72,7 @@ const PostProcuctCard = ({ data, getCards, setShow, usersList }) => {
                         Владелец:
                         <Form.Select
                             onChange={e => { setUseridState(e.target.value) }}
-                            style={{ marginTop: "25px" }}
+                            className="form_select"
                         >
                             {
                                 usersList.map((item) => {

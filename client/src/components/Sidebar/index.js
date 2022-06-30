@@ -8,8 +8,9 @@ import 'react-input-range/lib/css/index.css';
 import NewUserModal from "../Modals/NewUserModal";
 import DeleteAllThings from "../Modals/DeleteAllThings/DeleteAllThings";
 import DeleteUserModal from "../Modals/DeleteUserModal";
+import ChangeUserDataModal from "../Modals/ChangeUserDataModal/ChangeUserDataModal";
 
-
+import './SideBar.scss'
 
 export default function Sidebar({
     setShow,
@@ -33,6 +34,7 @@ export default function Sidebar({
 
     const [deleteUserModal, setDeleteUserModal] = useState(false)
 
+    const [changeUserDataModal, setChangeUserDataModal] = useState(false)
 
     const getCardsWithFilters = () => {
         setFilter({ ...filter, isFiltered: true })
@@ -64,6 +66,15 @@ export default function Sidebar({
         setDeleteAllModal(false)
     }
 
+    const openChangeUserData = () => {
+        handleCloseFilter()
+        setChangeUserDataModal(true)
+    }
+
+    const closeChangeUserData = () => {
+        setChangeUserDataModal(false)
+    }
+
     const clearFilterRef = useRef(null)
 
     const clearFilter = () => {
@@ -91,9 +102,9 @@ export default function Sidebar({
                         <option value={true}>Есть</option>
                     </Form.Select>
 
-                    <div style={{ margin: "25px 0" }}>
+                    <div className="sidebar_range">
                         <InputRange
-                            style={{ margin: "25px 0" }}
+                            className="sidebar_range"
                             minValue={1}
                             maxValue={1000000}
                             step={10}
@@ -108,7 +119,7 @@ export default function Sidebar({
 
                     <FormLabel>Дата до: {new Date(filter.maxDate).toLocaleString}</FormLabel>
                     <DatePicker locale="ru" value={filter.maxDate} onChange={(e) => setFilter({ ...filter, maxDate: e.toDateString(), isFiltered: false })} />
-                    <Form.Select onChange={e => { setFilter({ ...filter, userId: e.target.value, isFiltered: false }) }} style={{ marginTop: "25px" }}>
+                    <Form.Select onChange={e => { setFilter({ ...filter, userId: e.target.value, isFiltered: false }) }} className='sidebar_form-select'>
                         <option value={''}>Выберите пользователя:</option>
                         {
                             usersList.map((item) => {
@@ -118,14 +129,17 @@ export default function Sidebar({
                     </Form.Select>
 
                     <ButtonComp setShow={setShow} isDeleting={isDeleting} setIsDeleting={setIsDeleting} handleShowFilter={handleShowFilter} handleCloseFilter={handleCloseFilter} />
-                    <Button onClick={newUser} style={{ margin: "0 auto 25px", width: "100%" }}>Добавить нового пользователя</Button>
-                    <Button onClick={openModalUserDelete} style={{ margin: "0 auto 25px", width: "100%" }} variant="danger">Удалить пользователя</Button>
-                    <Button onClick={openModalDeleteAllThings} style={{ margin: "0 auto 25px", width: "100%" }} variant="danger">Удалить всё</Button>
-                    <Button onClick={getCardsWithFilters} style={{ width: "100%" }} variant="success">Применить</Button>
-                    <Button onClick={clearFilter} ref={clearFilterRef} style={{ margin: "25px auto 25px", width: "100%" }}>Сбросить фильтры</Button>
-
+                    <div className="sidebar_buttons">
+                        <Button onClick={newUser} className='sidebar_button'>Добавить нового пользователя</Button>
+                        <Button onClick={openChangeUserData} className='sidebar_button'>Изменить имя пользователя</Button>
+                        <Button onClick={openModalUserDelete} className='sidebar_button' variant="danger">Удалить пользователя</Button>
+                        <Button onClick={openModalDeleteAllThings} className='sidebar_button' variant="danger">Удалить всё</Button>
+                        <Button onClick={getCardsWithFilters} className='sidebar_button' variant="success">Применить</Button>
+                        <Button onClick={clearFilter} ref={clearFilterRef} className='sidebar_button'>Сбросить фильтры</Button>
+                    </div>
                 </Offcanvas.Body>
             </Offcanvas>
+            {changeUserDataModal && <ChangeUserDataModal getAndSetUserList={getAndSetUserList} closeChangeUserData={closeChangeUserData} usersList={usersList}/>}
             {deleteUserModal && <DeleteUserModal setDeleteUserModal={setDeleteUserModal} getAndSetUserList={getAndSetUserList} usersList={usersList} />}
             {newUserModal && <NewUserModal setNewUserModal={setNewUserModal} getAndSetUserList={getAndSetUserList} />}
             {deleteAllModal && <DeleteAllThings closeModalDeleteAllThings={closeModalDeleteAllThings} />}

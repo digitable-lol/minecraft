@@ -15,7 +15,7 @@ export default function CardList({isDeleting, getCards, cards, pageNum, setPageN
     return (
             <Container>
                 <div className='cardList'>
-                    {cards.length===0 && <h2>Нет элементов по вашему запросу</h2>}
+                    {cards.length === 0 && <h2>Нет элементов по вашему запросу</h2>}
                     {cards.map((card) => {
                         return (
                             <Col md={5} sm={5} xs={12} key={card.id}>
