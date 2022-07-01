@@ -88,7 +88,7 @@ export default function Sidebar({
 
     return (
         <>
-            <Offcanvas show={showFilter} onHide={handleCloseFilter}>
+            <Offcanvas show={showFilter} onHide={handleCloseFilter} className='offCanvas'>
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>Меню</Offcanvas.Title>
                 </Offcanvas.Header>

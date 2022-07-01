@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: #e1e3e6 !important;
 }
 
 code {
@@ -15,7 +16,7 @@ code {
 .App {
   text-align: center;
   position: relative;
-  background-color: #ffffffe3;
+  background-color: #1f1e22;
   min-height: 100vh;
 }
 

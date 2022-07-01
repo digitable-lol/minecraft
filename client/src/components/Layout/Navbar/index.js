@@ -1,4 +1,5 @@
 import { Container, Navbar, Nav, Button, Form, FormControl } from 'react-bootstrap'
+import '../Navbar/index.scss'
 
 
 const NavbarComp = ({ getCards, searchString, setSearchString, handleShowFilter }) => {
@@ -10,7 +11,7 @@ const NavbarComp = ({ getCards, searchString, setSearchString, handleShowFilter 
 
     return (
         <div className='fixed-nav'>
-            <Navbar bg="dark" variant="dark" expand="lg">
+            <Navbar expand="lg">
                 <Container>
                     <Navbar.Brand href="#home">Minecraft</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
