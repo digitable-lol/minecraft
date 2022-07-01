@@ -61,7 +61,7 @@ namespace Minecraft.Controllers
         {
             QrService.fileNameWithPath = QrService.GetQr(id, _context);
             string file_type = "application/jpg";
-            return File(QrService.fileNameWithPath, file_type, QrService.Getfilename());
+            return File(QrService.fileNameWithPath, file_type, QrService.fileName);
         }
 
         // PUT: api/things/5

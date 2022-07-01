@@ -12,15 +12,10 @@ namespace Minecraft.Data.Services
     {
         public static string fileNameWithPath { get; set; }
         public static string fileName { get; set; }
-        public static string Getfilename()
-        {
-            fileName = Convert.ToString(Guid.NewGuid()) + ".jpg";
-            return fileName;
-        }
         public static string GetQr(int id, AppDBContent context)
         {
             var thing = context.Things.Include(t => t.user).Where(t => t.id == id).FirstOrDefault();
-            string str = $"Name: {thing.name} \nUser: {thing.user.Firstname} {thing.user.Lastname}\nPrice: {thing.price}\nDate: {thing.date}\nDiscription: {thing.discription}";
+            string str = $"Name: {thing.name} \nUser: {thing.user.Firstname} {thing.user.Lastname}\nPrice: {thing.price}\nDate: {thing.date}\nQuantity: {thing.quantity}\nDiscription: {thing.discription}";
             string path = "wwwroot/photo/qr";
             if (str.Length >= 4296)
             {
@@ -28,7 +23,7 @@ namespace Minecraft.Data.Services
             }
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
-            fileName = Getfilename();
+            fileName = thing.name + ".jpg";
 
             string fileNameWithPath = Path.Combine(path, fileName);
             if (thing == null)
@@ -36,7 +31,7 @@ namespace Minecraft.Data.Services
                 return null;
             }
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(str, QRCodeGenerator.ECCLevel.Q, true);
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(str, QRCodeGenerator.ECCLevel.M, true);
             QRCode qrCode = new QRCode(qrCodeData);
             qrCode.GetGraphic(5).Save(fileNameWithPath);
             path = "photo/qr";
