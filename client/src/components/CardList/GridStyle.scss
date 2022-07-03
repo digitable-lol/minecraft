@@ -4,4 +4,7 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 25px;
+    &-container{
+        min-height: calc(100vh - 170px);
+    }
 }

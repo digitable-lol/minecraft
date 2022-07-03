@@ -13,7 +13,7 @@ const NavbarComp = ({ getCards, searchString, setSearchString, handleShowFilter 
         <div className='fixed-nav'>
             <Navbar expand="lg">
                 <Container>
-                    <Navbar.Brand href="#home">Minecraft</Navbar.Brand>
+                    <Navbar.Brand href="#home">INVENTORY</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
