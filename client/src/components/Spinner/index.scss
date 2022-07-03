@@ -1,0 +1,8 @@
+.spinner{
+    min-height: calc(100vh - 170px);
+    position: relative;
+    &-item{
+        position: absolute;
+        top: 50%;
+    }
+}

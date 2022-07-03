@@ -1,5 +1,5 @@
 .card {
-    background-color: rgb(255, 255, 255);
+    background-color: #5d5f61;
     box-shadow: 0px 0px 0px grey;
     -webkit-transition: box-shadow .2s ease-out;
     box-shadow: .8px .9px 3px grey;
@@ -50,23 +50,6 @@
         margin-top: auto;
     }
 
-    //.btn{
-    //    display: inline-block;
-    //    font-weight: 400;
-    //    line-height: 1.5;
-    //    color: #606060;
-    //    text-align: center;
-    //    text-decoration: none;
-    //     vertical-align: middle;
-    //    cursor: pointer;
-    //    -webkit-user-select: none;
-    //    user-select: none;
-    //    background-color: transparent;
-    //    font-size: 1rem;
-    //    border-radius: 0.25rem;
-    //transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-    // }
-
     .btn-primary {
         display: inline-block;
         box-sizing: border-box;
@@ -89,12 +72,9 @@
         touch-action: manipulation;
         vertical-align: top;
         transition: box-shadow 0.2s;
-        //color: rgba(255, 255, 255, 0.468);
-        //background-color: rgba(255, 255, 255, 0.1);
-        //border-color: rgba(255, 255, 255, 0.1);
     }
 
-    .btn-primary:focus-visible {
+    .btn-primary:focus:not(:focus-visible) {
         border: 1px solid #4c51f9;
         outline: none;
     }

@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Minecraft_5._0": {
+    "Minecraft": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

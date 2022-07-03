@@ -6,6 +6,7 @@ import PostProductModal from './components/Modals/PostProductModal';
 import Layout from './components/Layout/Layout';
 import { getUsers } from './services/user.service';
 import { getAllProducts, getProductsFromSearch, getProductsWithFilters } from './services/card.service';
+import Spinner from './components/Spinner';
 
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
   const [searchString, setSearchString] = useState()
   const [pageNum, setPageNum] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-
+  const [isLoading, setIsLoading] = useState(true)
 
   const [filter, setFilter] = useState({
     quantity: '',
@@ -43,10 +44,12 @@ function App() {
   }
 
   function getCards() {
+    setIsLoading(true)
     if (filter.isFiltered) {
       getProductsWithFilters(pageNum, searchString, filter)
         .then(res => {
           setCardListData(res.data, res.totalPages)
+          setIsLoading(false)
           window.scrollTo(0, 0)
         })
     }
@@ -54,6 +57,7 @@ function App() {
       getProductsFromSearch(pageNum, searchString)
         .then(res => {
           setCardListData(res.data, res.totalPages)
+          setIsLoading(false)
           window.scrollTo(0, 0)
         })
     }
@@ -61,14 +65,16 @@ function App() {
       getAllProducts(pageNum)
         .then(res => {
           setCardListData(res.data, res.totalPages)
-            window.scrollTo(0, 0)
-          })
+          setIsLoading(false)
+          console.log('getAllProducts')
+          window.scrollTo(0, 0)
+        })
     }
   }
 
   const getAndSetUserList = () => {
     getUsers()
-    .then((res) => { setUsersList(res.data) })
+      .then((res) => { setUsersList(res.data) })
   }
 
   useEffect(() => {
@@ -110,6 +116,7 @@ function App() {
           getAndSetUserList={getAndSetUserList}
         />
         <CardList
+          isLoading={isLoading}
           usersList={usersList}
           totalPages={totalPages}
           setTotalPages={setTotalPages}

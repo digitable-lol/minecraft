@@ -3,17 +3,19 @@ import { Container, Col } from 'react-bootstrap'
 import PaginationComp from './Pagination'
 import './GridStyle.scss'
 import ProductCardNew from '../ProductCard/ProductCardNew'
+import Spinner from '../Spinner'
 
 
-export default function CardList({isDeleting, getCards, cards, pageNum, setPageNum, totalPages, setTotalPages, usersList}) {
+export default function CardList({isDeleting, getCards, cards, pageNum, setPageNum, totalPages, setTotalPages, usersList, isLoading}) {
 
     useEffect(() => {
-        getCards({pageNum:pageNum, setTotalPages:setTotalPages})
+        getCards({pageNum : pageNum, setTotalPages : setTotalPages})
     }, [pageNum])
 
 
     return (
-            <Container>
+            <Container className='cardList-container'>
+                {!isLoading ? <>
                 <div className='cardList'>
                     {cards.length === 0 && <h2>Нет элементов по вашему запросу</h2>}
                     {cards.map((card) => {
@@ -25,6 +27,8 @@ export default function CardList({isDeleting, getCards, cards, pageNum, setPageN
                     })}
                 </div>
                 <PaginationComp setPageNum={setPageNum} pageNum={pageNum} totalPages={totalPages} />
+                </>
+                 : <Spinner/>}
             </Container>
     )
 }
